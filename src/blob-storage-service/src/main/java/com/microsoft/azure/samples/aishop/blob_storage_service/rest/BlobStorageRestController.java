@@ -23,7 +23,6 @@ import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.UserDelegationKey;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
-import com.microsoft.azure.samples.aishop.blob_storage_service.exception.GetResourceUrlException;
 import com.microsoft.azure.samples.aishop.blob_storage_service.exception.WriteBlobException;
 
 /**
@@ -70,7 +69,6 @@ public class BlobStorageRestController {
      * @param file The file to be uploaded.
      * @return The name of the blob corresponding to the uploaded file.
      * @throws WriteBlobException If an error occurs while writing the file to the blob storage.
-     * @throws GetResourceUrlException If an error occurs while getting the URL of the uploaded file.
      */
     @PostMapping("/upload")
     public String uploadFile(@RequestParam("file") final MultipartFile file) throws WriteBlobException {
