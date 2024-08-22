@@ -1,0 +1,16 @@
+{
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "java.saveActions.organizeImports": true,
+  "java.completion.importOrder": [
+
+        "#",
+        "java",
+        "javax",
+        "org",
+        "com",
+        ""
+    ],
+    "[java]": {
+        "editor.tabSize": 4
+    }
+}
