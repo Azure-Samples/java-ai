@@ -1,0 +1,173 @@
+package com.microsoft.azure.samples.aishop.blob_storage_service.rest;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.WritableResource;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.blob.models.UserDelegationKey;
+import com.azure.storage.blob.sas.BlobSasPermission;
+import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
+import com.microsoft.azure.samples.aishop.blob_storage_service.exception.GetResourceUrlException;
+import com.microsoft.azure.samples.aishop.blob_storage_service.exception.WriteBlobException;
+
+/**
+ * REST controller for managing blob storage operations.
+ */
+@RestController
+public class BlobStorageRestController {
+
+
+    /**
+     * Sets the container name for the blob storage service.
+     * 
+     * NOTE: This value is set in the application.properties file using
+     * the key "storage.blob.container-name". This service upload blob
+     * in a given container. There is not multiple container support.
+     *
+     * @param containerName the name of the container. Default value is "aishopinbox".
+     */
+    @Value("${storage.blob.container-name}")
+    private String containerName;
+
+    /**
+     * Sets the endpoint for the Azure Blob Storage service.
+     *
+     * @param endpoint the endpoint URL for the Azure Blob Storage service
+     */
+    @Value("${spring.cloud.azure.storage.blob.endpoint}")
+    private String endpoint;
+
+
+    /**
+     * The resource loader for the blob storage service.
+     */
+    @Autowired
+    private ResourceLoader resourceLoader;
+
+    /**
+     * Uploads a file to the blob storage.
+     *
+     * The REST API endpoint "/upload" is used to upload a file to the blob storage.
+     * The HTTP request should include the file to be uploaded as a form-data parameter
+     * with the key "file" and the method should be POST.
+     *
+     * @param file The file to be uploaded.
+     * @return The name of the blob corresponding to the uploaded file.
+     * @throws WriteBlobException If an error occurs while writing the file to the blob storage.
+     * @throws GetResourceUrlException If an error occurs while getting the URL of the uploaded file.
+     */
+    @PostMapping("/upload")
+    public String uploadFile(@RequestParam("file") final MultipartFile file) throws WriteBlobException {
+        final String blobLocation = this.generateBlobResourceLocation(file.getOriginalFilename());
+        final Resource blobResource = this.resourceLoader.getResource(blobLocation);
+        this.writeFileToBlob(file, blobResource);
+        return blobResource.getFilename();
+    }
+
+    /**
+     * Generates a Shared Access Signature (SAS) token URL for a given blob
+     * with Read permission for a given duration.
+     * 
+     * The REST API endpoint "/sas-token" is used to generate a SAS token URL
+     * with Read permission for a given duration. The HTTP request should include
+     * the query parameters "blobName" and "durationInSeconds" and the method
+     * should be POST.
+     *
+     * @param blobName The name of the blob.
+     * @param durationInSeconds The duration of the SAS token in seconds.
+     * @return The SAS token URL for the blob.
+     */
+    @PostMapping("/sas-token")
+    public String getSasTokenUrl(@RequestParam("blobName") final String blobName, @RequestParam("durationInSeconds") final long durationInSeconds) {
+        final BlobServiceClient blobServiceClient = this.generateBlobServiceClient();
+        final BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(this.containerName);
+        final BlobClient blobClient = containerClient.getBlobClient(blobName);
+        final OffsetDateTime expiryTime = OffsetDateTime.now().plusSeconds(durationInSeconds);
+        final String sasToken = blobClient.generateUserDelegationSas(
+            this.generateReadPermissionSasSignatureValues(expiryTime),
+            this.acquireUserDelegationKey(blobServiceClient, expiryTime));
+        return blobClient.getBlobUrl() + "?" + sasToken;
+    }
+
+    /**
+     * Generates the resource location for a blob based on the given file name.
+     * A unique file name is generated by appending a random UUID of 5 characters
+     * to the original file name.
+     *
+     * @param fileName The name of the file.
+     * @return The resource location of the blob.
+     */
+    private String generateBlobResourceLocation(final String fileName) {
+        final int lastIndexOfDot = fileName.lastIndexOf(".");
+        final String fileExtension = fileName.substring(lastIndexOfDot);
+        final String uniqueFileName = fileName.substring(0, lastIndexOfDot)
+            + "-" + UUID.randomUUID().toString().substring(0, 5);
+        return "azure-blob://" + this.containerName + "/" + uniqueFileName + fileExtension;
+    }
+
+    /**
+     * Writes the contents of the given file to the specified blob resource.
+     *
+     * @param file The file to be written to the blob resource.
+     * @param blobResource The resource representing the blob where the file will be written.
+     * @throws WriteBlobException If an error occurs while writing the file to the blob resource.
+     */
+    private void writeFileToBlob(final MultipartFile file, final Resource blobResource) throws WriteBlobException {
+        try (OutputStream os = ((WritableResource) blobResource).getOutputStream()) {
+            os.write(file.getBytes());
+        } catch (IOException e) {
+            throw new WriteBlobException(e);
+        }
+    }
+
+    /**
+     * Generates a BlobServiceClient object for interacting with Azure Blob Storage.
+     *
+     * @return The BlobServiceClient object.
+     */
+    private BlobServiceClient generateBlobServiceClient() {
+        return new BlobServiceClientBuilder()
+            .endpoint(this.endpoint)
+            .credential(new DefaultAzureCredentialBuilder().build())
+            .buildClient();
+    }
+
+    /**
+     * Generates a SAS (Shared Access Signature) signature values with read permission.
+     * 
+     * @param expiryTime The expiry time for the SAS signature.
+     * @return The BlobServiceSasSignatureValues object containing the generated SAS signature values.
+     */
+    private BlobServiceSasSignatureValues generateReadPermissionSasSignatureValues(final OffsetDateTime expiryTime) {
+        final BlobSasPermission permission = new BlobSasPermission().setReadPermission(true);
+        return new BlobServiceSasSignatureValues(expiryTime, permission);
+    }
+
+    /**
+     * Acquires a user delegation key from the specified BlobServiceClient. The key validity
+     * starts 5 minutes before the current time and ends at the specified expiry time.
+     *
+     * @param blobServiceClient The BlobServiceClient to acquire the user delegation key from.
+     * @param expiryTime The expiry time for the user delegation key.
+     * @return The acquired UserDelegationKey.
+     */
+    private UserDelegationKey acquireUserDelegationKey(final BlobServiceClient blobServiceClient, final OffsetDateTime expiryTime) {
+        return blobServiceClient.getUserDelegationKey(OffsetDateTime.now().minusMinutes(5), expiryTime);
+    }
+}
