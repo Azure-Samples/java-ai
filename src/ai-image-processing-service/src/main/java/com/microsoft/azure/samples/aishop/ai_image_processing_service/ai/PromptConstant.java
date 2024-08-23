@@ -10,6 +10,8 @@ public class PromptConstant {
         - Provide a detailed description of the item. Include all relevant information that a potential buyer would need to know before making a purchase.
         - Specify the condition of the item. The condition should be one of the following: New, Like New, Used, Refurbished.
         - Provide the price of the item in Dollar currency. The price should be in USD and should be a number with two decimal places. For example, 10.00.
+        - Provide the brand. If the brand is unknown, use the word "Unknown".
+        - Provide the model. If the model is unknown, use the word "Unknown".
     
     In the label, if you can, include the brand, model, and any other relevant information that would help a potential buyer understand what is being sold.
     
@@ -43,6 +45,8 @@ public class PromptConstant {
     Return all the information in a JSON format with the following structure:
     {
         "label": "Item label",
+        "brand": "Item brand",
+        "model": "Item model",
         "condition": "Item condition",
         "price": 0.00,
         "description": "Item description"
