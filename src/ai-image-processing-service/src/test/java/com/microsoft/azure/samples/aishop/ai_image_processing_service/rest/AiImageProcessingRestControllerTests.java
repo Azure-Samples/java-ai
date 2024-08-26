@@ -8,7 +8,6 @@ import java.net.MalformedURLException;
 import java.util.function.Consumer;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -17,11 +16,12 @@ import org.springframework.ai.azure.openai.AzureOpenAiChatOptions;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ChatClient.CallResponseSpec;
 import org.springframework.ai.chat.client.ChatClient.ChatClientRequestSpec;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 
+import com.microsoft.azure.samples.java_ai.common.dto.ItemCondition;
 import com.microsoft.azure.samples.java_ai.common.dto.ItemInfoDto;
 
-@RunWith(SpringRunner.class)
+@SpringBootTest
 public class AiImageProcessingRestControllerTests {
 
     @Mock
@@ -44,7 +44,7 @@ public class AiImageProcessingRestControllerTests {
         when(chatClientRequestSpec.call()).thenReturn(callResponseSpec);
 
         // Mock the answer
-        String answer = "{\"label\":\"Item Name\",\"price\":10.0}";
+        String answer = "{\"label\":\"Item Name\",\"price\":10.0,\"brand\":\"Brand Name\",\"model\":\"Model Name\",\"condition\":\"New\",\"description\":\"Item Description\"}";
         when(callResponseSpec.content()).thenReturn(answer);
 
         // Mock the ChatClient creation
@@ -57,6 +57,10 @@ public class AiImageProcessingRestControllerTests {
 
         // Verify the result
         assertEquals("Item Name", result.getLabel());
+        assertEquals("Brand Name", result.getBrand());
+        assertEquals("Model Name", result.getModel());
+        assertEquals(ItemCondition.NEW, result.getCondition());
         assertEquals(10.0, result.getPrice(), 0.001);
+        assertEquals("Item Description", result.getDescription());
     }
 }
