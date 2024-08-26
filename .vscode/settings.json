@@ -1,5 +1,5 @@
 {
-  "java.configuration.updateBuildConfiguration": "interactive",
+  "java.configuration.updateBuildConfiguration": "automatic",
   "java.saveActions.organizeImports": true,
   "java.completion.importOrder": [
 
@@ -12,5 +12,6 @@
     ],
     "[java]": {
         "editor.tabSize": 4
-    }
+    },
+    "java.compile.nullAnalysis.mode": "automatic"
 }

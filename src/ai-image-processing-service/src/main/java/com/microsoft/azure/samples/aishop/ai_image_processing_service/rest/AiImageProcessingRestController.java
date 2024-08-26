@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.microsoft.azure.samples.aishop.ai_image_processing_service.ai.PromptConstant;
-import com.microsoft.azure.samples.aishop.ai_image_processing_service.dto.ItemInfoDto;
+import com.microsoft.azure.samples.java_ai.common.dto.ItemInfoDto;
 
 @RestController
 public class AiImageProcessingRestController {

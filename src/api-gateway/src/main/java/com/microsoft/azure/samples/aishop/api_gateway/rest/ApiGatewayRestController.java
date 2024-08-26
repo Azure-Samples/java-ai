@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.microsoft.azure.samples.aishop.ai_image_processing_service.dto.ItemInfoDto;
 import com.microsoft.azure.samples.aishop.api_gateway.rest.client.AiImageProcessingServiceClient;
 import com.microsoft.azure.samples.aishop.api_gateway.rest.client.BlobStorageServiceClient;
+import com.microsoft.azure.samples.java_ai.common.dto.ItemInfoDto;
 
 @RestController
 public class ApiGatewayRestController {

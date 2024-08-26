@@ -1,4 +1,4 @@
-package com.microsoft.azure.samples.aishop.ai_image_processing_service.dto;
+package com.microsoft.azure.samples.java_ai.common.dto;
 
 import java.util.Objects;
 

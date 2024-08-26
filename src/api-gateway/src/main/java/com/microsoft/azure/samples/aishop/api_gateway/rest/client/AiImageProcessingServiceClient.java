@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.microsoft.azure.samples.aishop.ai_image_processing_service.dto.ItemInfoDto;
+import com.microsoft.azure.samples.java_ai.common.dto.ItemInfoDto;
 
 @FeignClient(value = "ai-image-processing-service")
 public interface AiImageProcessingServiceClient {

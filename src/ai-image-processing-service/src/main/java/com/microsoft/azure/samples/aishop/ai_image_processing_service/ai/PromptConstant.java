@@ -16,12 +16,12 @@ public class PromptConstant {
     In the label, if you can, include the brand, model, and any other relevant information that would help a potential buyer understand what is being sold.
     
     In the description, include the following:
-      - The brand of the item if applicable.
-      - The model of the item if applicable.
-      - The size of the item if applicable.
-      - A detailed description of the item.
-      - A description of the condition of the item.
-      - Any other relevant information that would help a potential buyer understand what is being sold.
+        - The brand of the item if applicable.
+        - The model of the item if applicable.
+        - The size of the item if applicable.
+        - A detailed description of the item.
+        - A description of the condition of the item.
+        - Any other relevant information that would help a potential buyer understand what is being sold.
     
     
     ### START Example of Title
