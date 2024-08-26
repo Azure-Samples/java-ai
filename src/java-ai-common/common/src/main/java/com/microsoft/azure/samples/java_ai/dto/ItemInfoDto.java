@@ -1,8 +1,8 @@
-package com.microsoft.azure.samples.aishop.ai_image_processing_service.model;
+package com.microsoft.azure.samples.aishop.ai_image_processing_service.dto;
 
 import java.util.Objects;
 
-public class ItemInfo {
+public class ItemInfoDto {
   
   private String label;
   private String brand;
@@ -10,8 +10,11 @@ public class ItemInfo {
   private ItemCondition condition;
   private double price;
   private String description;
+
+  public ItemInfoDto() {
+  }
   
-  public ItemInfo(final String label, final String brand, final String model, final ItemCondition condition, final double price, final String description) {
+  public ItemInfoDto(final String label, final String brand, final String model, final ItemCondition condition, final double price, final String description) {
     this.label = label;
     this.brand = brand;
     this.model = model;

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.microsoft.azure.samples.aishop.ai_image_processing_service.ai.PromptConstant;
-import com.microsoft.azure.samples.aishop.ai_image_processing_service.model.ItemInfo;
+import com.microsoft.azure.samples.aishop.ai_image_processing_service.dto.ItemInfoDto;
 
 @RestController
 public class AiImageProcessingRestController {
@@ -36,7 +36,7 @@ public class AiImageProcessingRestController {
      * @throws MalformedURLException If the image blob URL is invalid. 
      */
     @PostMapping("/item-info")
-    public ItemInfo getItemInfo(@RequestParam("imageBlobSasTokenUrl") final String imageBlobSasTokenUrl, @RequestParam("mimeType") final String mimeType) throws MalformedURLException {
+    public ItemInfoDto getItemInfo(@RequestParam("imageBlobSasTokenUrl") final String imageBlobSasTokenUrl, @RequestParam("mimeType") final String mimeType) throws MalformedURLException {
         final AzureOpenAiChatOptions chatOptions = AzureOpenAiChatOptions.builder()
             .withDeploymentName("gpt-4o")
             .withTemperature(0f)
@@ -51,8 +51,8 @@ public class AiImageProcessingRestController {
             .user(u -> u.text(PromptConstant.ITEM_DESCRIPTION_USER_PROMPT).media(imageMedia))
             .call()
             .content();
-        final ItemInfo itemInfo = parseItemInfo(answer);
-        return itemInfo;
+        final ItemInfoDto itemInfoDto = parseItemInfoDto(answer);
+        return itemInfoDto;
     }
 
     /**
@@ -69,8 +69,8 @@ public class AiImageProcessingRestController {
         return new Media(mimeType, url);
     }
 
-    private ItemInfo parseItemInfo(final String answer) {
+    private ItemInfoDto parseItemInfoDto(final String answer) {
         final Gson gson = new Gson();
-        return gson.fromJson(answer, ItemInfo.class);
+        return gson.fromJson(answer, ItemInfoDto.class);
     }
 }

@@ -1,4 +1,4 @@
-package com.microsoft.azure.samples.aishop.ai_image_processing_service.model;
+package com.microsoft.azure.samples.aishop.ai_image_processing_service.dto;
 
 import com.google.gson.annotations.SerializedName;
 
