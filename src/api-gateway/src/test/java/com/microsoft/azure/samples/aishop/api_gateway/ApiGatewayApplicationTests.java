@@ -8,6 +8,7 @@ class ApiGatewayApplicationTests {
 
 	@Test
 	void contextLoads() {
+		ApiGatewayApplication.main(new String[] {});
 	}
 
 }

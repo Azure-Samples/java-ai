@@ -1,6 +1,5 @@
 package com.microsoft.azure.samples.aishop.api_gateway.rest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,18 +11,22 @@ import com.microsoft.azure.samples.java_ai.common.dto.ItemInfoDto;
 
 @RestController
 public class ApiGatewayRestController {
-
-  @Autowired
-  private BlobStorageServiceClient blobStorageServiceClient;
-  @Autowired
-  private AiImageProcessingServiceClient aiImageProcessingServiceClient;
-
-  @PostMapping("/item-info")
-  public ItemInfoDto getItemInfo(@RequestParam("image") final MultipartFile image) {
-    final String blobName = blobStorageServiceClient.uploadFile(image);
-    final String blobSasTokenUrl = blobStorageServiceClient.getSasTokenUrl(blobName, 500);
-    final ItemInfoDto itemInfoDto = aiImageProcessingServiceClient.getItemInfo(blobSasTokenUrl, image.getContentType());
-    return itemInfoDto;
-  }
-  
+    
+    private final BlobStorageServiceClient blobStorageServiceClient;
+    private final AiImageProcessingServiceClient aiImageProcessingServiceClient;
+    
+    public ApiGatewayRestController(final BlobStorageServiceClient blobStorageServiceClient,
+    final AiImageProcessingServiceClient aiImageProcessingServiceClient) {
+        this.blobStorageServiceClient = blobStorageServiceClient;
+        this.aiImageProcessingServiceClient = aiImageProcessingServiceClient;
+    }
+    
+    @PostMapping("/item-info")
+    public ItemInfoDto getItemInfo(@RequestParam("image") final MultipartFile image) {
+        final String blobName = blobStorageServiceClient.uploadFile(image);
+        final String blobSasTokenUrl = blobStorageServiceClient.getSasTokenUrl(blobName, 500);
+        final ItemInfoDto itemInfoDto = aiImageProcessingServiceClient.getItemInfo(blobSasTokenUrl, image.getContentType());
+        return itemInfoDto;
+    }
+    
 }

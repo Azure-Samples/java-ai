@@ -8,7 +8,6 @@ import org.springframework.ai.azure.openai.AzureOpenAiChatOptions;
 import org.springframework.ai.azure.openai.AzureOpenAiResponseFormat;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.model.Media;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +22,7 @@ public class AiImageProcessingRestController {
     
     private final AzureOpenAiChatModel chatModel;
 
-    @Autowired AiImageProcessingRestController(final AzureOpenAiChatModel chatModel) {
+    public AiImageProcessingRestController(final AzureOpenAiChatModel chatModel) {
         this.chatModel = chatModel;
     }
 
