@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -56,8 +55,16 @@ public class BlobStorageRestController {
     /**
      * The resource loader for the blob storage service.
      */
-    @Autowired
-    private ResourceLoader resourceLoader;
+    private final ResourceLoader resourceLoader;
+
+    /**
+     * Creates a new instance of the BlobStorageRestController class.
+     *
+     * @param resourceLoader The resource loader for the blob storage service.
+     */
+    public BlobStorageRestController(final ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
 
     /**
      * Uploads a file to the blob storage.
