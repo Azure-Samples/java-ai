@@ -46,7 +46,7 @@ public class AiImageProcessingRestControllerTests {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testGetItemInfo() throws Exception {
+    public void shouldReturnItemInfoWithStatusOk() throws Exception {
         // Mock the response from the ChatClient
         final ChatClient chatClient = Mockito.mock(ChatClient.class);
         final ChatClientRequestSpec chatClientRequestSpec = Mockito.mock(ChatClientRequestSpec.class);
@@ -91,5 +91,53 @@ public class AiImageProcessingRestControllerTests {
         verify(chatClientRequestSpec, times(1)).system(PromptConstant.ITEM_DESCRIPTION_SYSTEM_PROMPT);
         verify(chatClientRequestSpec, times(1)).user(any(Consumer.class));
         verify(chatClientRequestSpec, times(1)).call();
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenImageBlobSasTokenUrlIsNull() throws Exception {
+        mockMvc
+            .perform(post("/item-info")
+                .param("mimeType", "image/jpeg")
+            )
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenImageBlobSasTokenUrlIsEmpty() throws Exception {
+        mockMvc
+            .perform(post("/item-info")
+                .param("imageBlobSasTokenUrl", "")
+                .param("mimeType", "image/jpeg")
+            )
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenImageBlobSasTokenUrlIsNotAWellFormedUrl() throws Exception {
+        mockMvc
+            .perform(post("/item-info")
+                .param("imageBlobSasTokenUrl", "not-a-well-formed-url")
+                .param("mimeType", "image/jpeg")
+            )
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenMimeTypeIsNull() throws Exception {
+        mockMvc
+            .perform(post("/item-info")
+                .param("imageBlobSasTokenUrl", "http://myblob.com/imageBlobSasTokenUrl")
+            )
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenMimeTypeIsEmpty() throws Exception {
+        mockMvc
+            .perform(post("/item-info")
+                .param("imageBlobSasTokenUrl", "http://myblob.com/imageBlobSasTokenUrl")
+                .param("mimeType", "")
+            )
+            .andExpect(status().isBadRequest());
     }
 }

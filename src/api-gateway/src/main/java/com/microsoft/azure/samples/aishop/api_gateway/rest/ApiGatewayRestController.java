@@ -9,6 +9,8 @@ import com.microsoft.azure.samples.aishop.api_gateway.rest.client.AiImageProcess
 import com.microsoft.azure.samples.aishop.api_gateway.rest.client.BlobStorageServiceClient;
 import com.microsoft.azure.samples.java_ai.common.dto.ItemInfoDto;
 
+import jakarta.validation.constraints.NotNull;
+
 @RestController
 public class ApiGatewayRestController {
     
@@ -22,7 +24,7 @@ public class ApiGatewayRestController {
     }
     
     @PostMapping("/item-info")
-    public ItemInfoDto getItemInfo(@RequestParam("image") final MultipartFile image) {
+    public ItemInfoDto getItemInfo(@RequestParam("image") @NotNull final MultipartFile image) {
         final String blobName = blobStorageServiceClient.uploadFile(image);
         final String blobSasTokenUrl = blobStorageServiceClient.getSasTokenUrl(blobName, 500);
         final ItemInfoDto itemInfoDto = aiImageProcessingServiceClient.getItemInfo(blobSasTokenUrl, image.getContentType());

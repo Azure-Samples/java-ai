@@ -17,6 +17,9 @@ import com.google.gson.Gson;
 import com.microsoft.azure.samples.aishop.ai_image_processing_service.ai.PromptConstant;
 import com.microsoft.azure.samples.java_ai.common.dto.ItemInfoDto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 @RestController
 public class AiImageProcessingRestController {
     
@@ -35,7 +38,9 @@ public class AiImageProcessingRestController {
      * @throws MalformedURLException If the image blob URL is invalid. 
      */
     @PostMapping("/item-info")
-    public ItemInfoDto getItemInfo(@RequestParam("imageBlobSasTokenUrl") final String imageBlobSasTokenUrl, @RequestParam("mimeType") final String mimeType) throws MalformedURLException {
+    public ItemInfoDto getItemInfo(
+        @RequestParam("imageBlobSasTokenUrl") @NotNull @Size(min = 1) final String imageBlobSasTokenUrl,
+        @RequestParam("mimeType") @NotNull @Size(min = 1) final String mimeType) throws MalformedURLException {
         final AzureOpenAiChatOptions chatOptions = AzureOpenAiChatOptions.builder()
             .withDeploymentName("gpt-4o")
             .withTemperature(0f)
@@ -60,7 +65,7 @@ public class AiImageProcessingRestController {
      * @param imageBlobUrl The URL of the image blob.
      * @param mimeTypeAsString The MIME type of the image as a string.
      * @return A new Media object representing the image.
-     * @throws MalformedURLException 
+     * @throws MalformedURLException If the image blob URL is invalid.
      */
     private Media generateMedia(final String imageBlobUrl, final String mimeTypeAsString) throws MalformedURLException {
         final URL url = new URL(imageBlobUrl);

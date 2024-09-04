@@ -26,7 +26,7 @@ import com.microsoft.azure.samples.java_ai.common.dto.ItemInfoDto;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(ApiGatewayRestController.class)
-public class ApiGatewayRestControllerTest {
+public class ApiGatewayRestControllerTests {
     
     @MockBean
     private BlobStorageServiceClient blobStorageServiceClient;
@@ -41,10 +41,10 @@ public class ApiGatewayRestControllerTest {
     private ObjectMapper objectMapper;
     
     @Test
-    public void testGetItemInfo() throws Exception {
+    public void shouldReturnItemInfoWithStatusOk() throws Exception {
         // Expected results
         final String expectedBlobName = "testBlobName";
-        String expectedBlobSasTokenUrl = "testBlobSasTokenUrl";
+        final String expectedBlobSasTokenUrl = "testBlobSasTokenUrl";
         ItemInfoDto expectedItemInfoDto = new ItemInfoDto(
             "Item Name","Brand Name", "Model Name",
             ItemCondition.NEW, 10.0, "Item Description"
@@ -77,5 +77,13 @@ public class ApiGatewayRestControllerTest {
         verify(blobStorageServiceClient, times(1)).uploadFile(image);
         verify(blobStorageServiceClient, times(1)).getSasTokenUrl(expectedBlobName, 500);
         verify(aiImageProcessingServiceClient, times(1)).getItemInfo(expectedBlobSasTokenUrl, image.getContentType());
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenImageIsNull() throws Exception {
+        // Perform the test
+        mockMvc
+            .perform(multipart("/item-info"))
+            .andExpect(status().isBadRequest());
     }
 }
