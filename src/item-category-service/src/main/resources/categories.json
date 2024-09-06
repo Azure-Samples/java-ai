@@ -1,0 +1,761 @@
+[
+  {
+    "name": "Electronics",
+    "subcategories": [
+      {
+        "name": "Mobile Phones",
+        "level2Subcategories": [
+          {
+            "name": "iPhones"
+          },
+          {
+            "name": "Android Phones"
+          },
+          {
+            "name": "Windows Phones"
+          },
+          {
+            "name": "Basic Phones"
+          }
+        ]
+      },
+      {
+        "name": "Laptops",
+        "level2Subcategories": [
+          {
+            "name": "Ultrabooks"
+          },
+          {
+            "name": "Gaming Laptops"
+          },
+          {
+            "name": "Notebooks"
+          }
+        ]
+      },
+      {
+        "name": "Tablets",
+        "level2Subcategories": [
+          {
+            "name": "iPads"
+          },
+          {
+            "name": "Android Tablets"
+          }
+        ]
+      },
+      {
+        "name": "Cameras",
+        "level2Subcategories": [
+          {
+            "name": "DSLRs"
+          },
+          {
+            "name": "Point and Shoot"
+          },
+          {
+            "name": "Instant Cameras"
+          }
+        ]
+      },
+      {
+        "name": "TVs",
+        "level2Subcategories": [
+          {
+            "name": "LED"
+          },
+          {
+            "name": "OLED"
+          },
+          {
+            "name": "QLED"
+          }
+        ]
+      },
+      {
+        "name": "Headphones",
+        "level2Subcategories": [
+          {
+            "name": "Over Ear"
+          },
+          {
+            "name": "In Ear"
+          },
+          {
+            "name": "On Ear"
+          }
+        ]
+      },
+      {
+        "name": "Smartwatches",
+        "level2Subcategories": [
+          {
+            "name": "Apple Watch"
+          },
+          {
+            "name": "Samsung Gear"
+          },
+          {
+            "name": "Fitbit"
+          },
+          {
+            "name": "Garmin"
+          },
+          {
+            "name": "Others"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Fashion",
+    "subcategories": [
+      {
+        "name": "Pants",
+        "level2Subcategories": [
+          {
+            "name": "Jeans"
+          },
+          {
+            "name": "Chinos"
+          },
+          {
+            "name": "Joggers"
+          },
+          {
+            "name": "Cargo Pants"
+          }
+        ]
+      },
+      {
+        "name": "Shirts",
+        "level2Subcategories": [
+          {
+            "name": "T-Shirts"
+          },
+          {
+            "name": "Polo Shirts"
+          },
+          {
+            "name": "Casual Shirts"
+          },
+          {
+            "name": "Formal Shirts"
+          }
+        ]
+      },
+      {
+        "name": "Shoes",
+        "level2Subcategories": [
+          {
+            "name": "Sneakers"
+          },
+          {
+            "name": "Loafers"
+          },
+          {
+            "name": "Boots"
+          },
+          {
+            "name": "Sandals"
+          }
+        ]
+      },
+      {
+        "name": "Watches",
+        "level2Subcategories": [
+          {
+            "name": "Analog"
+          },
+          {
+            "name": "Digital"
+          },
+          {
+            "name": "Smart"
+          }
+        ]
+      },
+      {
+        "name": "Sunglasses",
+        "level2Subcategories": [
+          {
+            "name": "Aviators"
+          },
+          {
+            "name": "Wayfarers"
+          },
+          {
+            "name": "Round"
+          },
+          {
+            "name": "Square"
+          }
+        ]
+      },
+      {
+        "name": "Bags",
+        "level2Subcategories": [
+          {
+            "name": "Backpacks"
+          },
+          {
+            "name": "Messenger Bags"
+          },
+          {
+            "name": "Duffel Bags"
+          },
+          {
+            "name": "Tote Bags"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Video Games",
+    "subcategories": [
+      {
+        "name": "Consoles",
+        "level2Subcategories": [
+          {
+            "name": "PlayStation 5"
+          },
+          {
+            "name": "Xbox Series X/S"
+          },
+          {
+            "name": "Nintendo Switch"
+          },
+          {
+            "name": "PC"
+          },
+          {
+            "name": "Retro"
+          },
+          {
+            "name": "Others"
+          }
+        ]
+      },
+      {
+        "name": "Games",
+        "level2Subcategories": [
+          {
+            "name": "Action"
+          },
+          {
+            "name": "Adventure"
+          },
+          {
+            "name": "RPG"
+          },
+          {
+            "name": "Sports"
+          },
+          {
+            "name": "Strategy"
+          }
+        ]
+      },
+      {
+        "name": "Accessories",
+        "level2Subcategories": [
+          {
+            "name": "Controllers"
+          },
+          {
+            "name": "Headsets"
+          },
+          {
+            "name": "Charging Stations"
+          },
+          {
+            "name": "Cables"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Books",
+    "subcategories": [
+      {
+        "name": "Fiction",
+        "level2Subcategories": [
+          {
+            "name": "Mystery"
+          },
+          {
+            "name": "Thriller"
+          },
+          {
+            "name": "Romance"
+          },
+          {
+            "name": "Science Fiction"
+          },
+          {
+            "name": "Fantasy"
+          }
+        ]
+      },
+      {
+        "name": "Non-Fiction",
+        "level2Subcategories": [
+          {
+            "name": "Biography"
+          },
+          {
+            "name": "Self-Help"
+          },
+          {
+            "name": "Cooking"
+          },
+          {
+            "name": "History"
+          },
+          {
+            "name": "Travel"
+          },
+          {
+            "name": "Science"
+          },
+          {
+            "name": "Others"
+          }
+        ]
+      },
+      {
+        "name": "Children's Books",
+        "level2Subcategories": [
+          {
+            "name": "Picture Books"
+          },
+          {
+            "name": "Early Readers"
+          },
+          {
+            "name": "Middle Grade"
+          },
+          {
+            "name": "Young Adult"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Home & Kitchen",
+    "subcategories": [
+      {
+        "name": "Furniture",
+        "level2Subcategories": [
+          {
+            "name": "Sofas"
+          },
+          {
+            "name": "Beds"
+          },
+          {
+            "name": "Dining Tables"
+          },
+          {
+            "name": "Chairs"
+          }
+        ]
+      },
+      {
+        "name": "Appliances",
+        "level2Subcategories": [
+          {
+            "name": "Refrigerators"
+          },
+          {
+            "name": "Washing Machines"
+          },
+          {
+            "name": "Microwaves"
+          },
+          {
+            "name": "Air Conditioners"
+          }
+        ]
+      },
+      {
+        "name": "Cookware",
+        "level2Subcategories": [
+          {
+            "name": "Pots and Pans"
+          },
+          {
+            "name": "Bakeware"
+          },
+          {
+            "name": "Cooking Utensils"
+          },
+          {
+            "name": "Cutlery"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Beauty & Personal Care",
+    "subcategories": [
+      {
+        "name": "Makeup",
+        "level2Subcategories": [
+          {
+            "name": "Foundation"
+          },
+          {
+            "name": "Lipstick"
+          },
+          {
+            "name": "Mascara"
+          },
+          {
+            "name": "Eyeshadow"
+          }
+        ]
+      },
+      {
+        "name": "Skincare",
+        "level2Subcategories": [
+          {
+            "name": "Cleansers"
+          },
+          {
+            "name": "Moisturizers"
+          },
+          {
+            "name": "Serums"
+          },
+          {
+            "name": "Masks"
+          }
+        ]
+      },
+      {
+        "name": "Haircare",
+        "level2Subcategories": [
+          {
+            "name": "Shampoo"
+          },
+          {
+            "name": "Conditioner"
+          },
+          {
+            "name": "Styling Products"
+          },
+          {
+            "name": "Hair Color"
+          }
+        ]
+      },
+      {
+        "name": "Fragrances",
+        "level2Subcategories": [
+          {
+            "name": "Perfumes"
+          },
+          {
+            "name": "Colognes"
+          },
+          {
+            "name": "Body Sprays"
+          }
+        ]
+      },
+      {
+        "name": "Personal Care",
+        "level2Subcategories": [
+          {
+            "name": "Toothpaste"
+          },
+          {
+            "name": "Deodorant"
+          },
+          {
+            "name": "Shaving Cream"
+          },
+          {
+            "name": "Body Wash"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Sports & Outdoors",
+    "subcategories": [
+      {
+        "name": "Fitness",
+        "level2Subcategories": [
+          {
+            "name": "Yoga"
+          },
+          {
+            "name": "Running"
+          },
+          {
+            "name": "Cycling"
+          },
+          {
+            "name": "Strength Training"
+          },
+          {
+            "name": "Cardio"
+          }
+        ]
+      },
+      {
+        "name": "Outdoor Recreation",
+        "level2Subcategories": [
+          {
+            "name": "Camping"
+          },
+          {
+            "name": "Hiking"
+          },
+          {
+            "name": "Fishing"
+          },
+          {
+            "name": "Boating"
+          }
+        ]
+      },
+      {
+        "name": "Team Sports",
+        "level2Subcategories": [
+          {
+            "name": "Soccer"
+          },
+          {
+            "name": "Basketball"
+          },
+          {
+            "name": "Football"
+          },
+          {
+            "name": "Baseball"
+          }
+        ]
+      },
+      {
+        "name": "Athletic Clothing",
+        "level2Subcategories": [
+          {
+            "name": "Shirts"
+          },
+          {
+            "name": "Shorts"
+          },
+          {
+            "name": "Jackets"
+          },
+          {
+            "name": "Socks"
+          }
+        ]
+      },
+      {
+        "name": "Footwear",
+        "level2Subcategories": [
+          {
+            "name": "Running Shoes"
+          },
+          {
+            "name": "Soccer Cleats"
+          },
+          {
+            "name": "Basketball Shoes"
+          },
+          {
+            "name": "Football Cleats"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Toys & Games",
+    "subcategories": [
+      {
+        "name": "Action Figures",
+        "level2Subcategories": [
+          {
+            "name": "Superheroes"
+          },
+          {
+            "name": "Star Wars"
+          },
+          {
+            "name": "Transformers"
+          },
+          {
+            "name": "Power Rangers"
+          }
+        ]
+      },
+      {
+        "name": "Dolls",
+        "level2Subcategories": [
+          {
+            "name": "Barbie"
+          },
+          {
+            "name": "Others"
+          }
+        ]
+      },
+      {
+        "name": "Board Games",
+        "level2Subcategories": [
+          {
+            "name": "Monopoly"
+          },
+          {
+            "name": "Scrabble"
+          },
+          {
+            "name": "Catan"
+          },
+          {
+            "name": "Ticket to Ride"
+          }
+        ]
+      },
+      {
+        "name": "Puzzles",
+        "level2Subcategories": [
+          {
+            "name": "Jigsaw"
+          },
+          {
+            "name": "3D"
+          },
+          {
+            "name": "Wooden"
+          }
+        ]
+      },
+      {
+        "name": "Outdoor Play",
+        "level2Subcategories": [
+          {
+            "name": "Swing Sets"
+          },
+          {
+            "name": "Trampolines"
+          },
+          {
+            "name": "Slides"
+          },
+          {
+            "name": "Water Guns"
+          },
+          {
+            "name": "Nerf"
+          },
+          {
+            "name": "Sandboxes"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Home",
+    "subcategories": [
+      {
+        "name": "Bedding",
+        "level2Subcategories": [
+          {
+            "name": "Sheets"
+          },
+          {
+            "name": "Comforters"
+          },
+          {
+            "name": "Duvet Covers"
+          },
+          {
+            "name": "Pillows"
+          }
+        ]
+      },
+      {
+        "name": "Bath",
+        "level2Subcategories": [
+          {
+            "name": "Towels"
+          },
+          {
+            "name": "Shower Curtains"
+          },
+          {
+            "name": "Bath Mats"
+          },
+          {
+            "name": "Bath Accessories"
+          }
+        ]
+      },
+      {
+        "name": "Decor",
+        "level2Subcategories": [
+          {
+            "name": "Wall Art"
+          },
+          {
+            "name": "Mirrors"
+          },
+          {
+            "name": "Clocks"
+          },
+          {
+            "name": "Vases"
+          }
+        ]
+      },
+      {
+        "name": "Lighting",
+        "level2Subcategories": [
+          {
+            "name": "Ceiling Lights"
+          },
+          {
+            "name": "Floor Lamps"
+          },
+          {
+            "name": "Table Lamps"
+          },
+          {
+            "name": "Wall Lights"
+          }
+        ]
+      },
+      {
+        "name": "Storage",
+        "level2Subcategories": [
+          {
+            "name": "Baskets"
+          },
+          {
+            "name": "Boxes"
+          },
+          {
+            "name": "Shelves"
+          },
+          {
+            "name": "Drawers"
+          }
+        ]
+      }
+    ]
+  }
+]

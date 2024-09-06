@@ -7,6 +7,7 @@ public class ItemInfoDto {
   private String label;
   private String brand;
   private String model;
+  private ItemCategoryDto category;
   private ItemCondition condition;
   private double price;
   private String description;
@@ -14,10 +15,11 @@ public class ItemInfoDto {
   public ItemInfoDto() {
   }
   
-  public ItemInfoDto(final String label, final String brand, final String model, final ItemCondition condition, final double price, final String description) {
+  public ItemInfoDto(final String label, final String brand, final String model, final ItemCategoryDto category, final ItemCondition condition, final double price, final String description) {
     this.label = label;
     this.brand = brand;
     this.model = model;
+    this.category = category;
     this.condition = condition;
     this.price = price;
     this.description = description;
@@ -47,6 +49,14 @@ public class ItemInfoDto {
     this.model = model;
   }
 
+  public ItemCategoryDto getCategory() {
+    return category;
+  }
+
+  public void setCategory(final ItemCategoryDto category) {
+    this.category = category;
+  }
+
   public ItemCondition getCondition() {
     return condition;
   }
@@ -73,10 +83,11 @@ public class ItemInfoDto {
 
   @Override
   public String toString() {
-    return "ItemInfo{" +
+    return "ItemInfoDto{" +
         "label='" + label + '\'' +
         ", brand='" + brand + '\'' +
         ", model='" + model + '\'' +
+        ", category=" + category +
         ", condition=" + condition +
         ", price=" + price +
         ", description='" + description + '\'' +

@@ -1,0 +1,54 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-EurekaServerApplication<eureka-server>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.microsoft.azure.samples.aishop.eureka_server.EurekaServerApplication",
+      "projectName": "eureka-server",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-AiImageProcessingServiceApplication<ai-image-processing-service>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.microsoft.azure.samples.aishop.ai_image_processing_service.AiImageProcessingServiceApplication",
+      "projectName": "ai-image-processing-service",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-AiItemCategorizationServiceApplication<ai-item-categorization-service>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.microsoft.azure.samples.aishop.ai_item_categorization_service.AiItemCategorizationServiceApplication",
+      "projectName": "ai-item-categorization-service",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-BlobStorageServiceApplication<blob-storage-service>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.microsoft.azure.samples.aishop.blob_storage_service.BlobStorageServiceApplication",
+      "projectName": "blob-storage-service",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-ApiGatewayApplication<api-gateway>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.microsoft.azure.samples.aishop.api_gateway.ApiGatewayApplication",
+      "projectName": "api-gateway",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

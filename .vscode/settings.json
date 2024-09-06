@@ -14,5 +14,6 @@
         "editor.tabSize": 4
     },
     "java.compile.nullAnalysis.mode": "automatic",
-    "java.debug.settings.onBuildFailureProceed": true
+    "java.debug.settings.onBuildFailureProceed": true,
+    "remote.autoForwardPortsFallback": 0
 }
