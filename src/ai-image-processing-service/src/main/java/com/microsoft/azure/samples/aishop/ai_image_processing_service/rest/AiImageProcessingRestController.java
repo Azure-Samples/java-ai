@@ -45,7 +45,7 @@ public class AiImageProcessingRestController {
             .withDeploymentName("gpt-4o")
             .withTemperature(0f)
             .withTopP(1f)
-            .withMaxTokens(2000)
+            .withMaxTokens(4000)
             .withResponseFormat(AzureOpenAiResponseFormat.JSON)
             .build();
         final Media imageMedia = this.generateMedia(imageBlobSasTokenUrl, mimeType);

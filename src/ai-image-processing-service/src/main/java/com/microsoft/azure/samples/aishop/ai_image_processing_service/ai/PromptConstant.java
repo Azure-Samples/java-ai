@@ -1,10 +1,10 @@
 package com.microsoft.azure.samples.aishop.ai_image_processing_service.ai;
 
 public class PromptConstant {
-    public static String ITEM_DESCRIPTION_SYSTEM_PROMPT = """
+    public static final String ITEM_DESCRIPTION_SYSTEM_PROMPT = """
         You are an expert in the field of e-commerce and you have been asked to provide a description of an item that is available for sale. You act as a professional that is at the service of the customer to describe objectively the item that is available for sale.""";
     
-    public static String ITEM_DESCRIPTION_USER_PROMPT = """
+    public static final String ITEM_DESCRIPTION_USER_PROMPT = """
     Describe the item for sale that is represented on the picture:
         - Give a short descriptive label for item. The label should describe well the item so a potential buyer can understand what is being sold.
         - Provide a detailed description of the item. Include all relevant information that a potential buyer would need to know before making a purchase.
@@ -22,7 +22,14 @@ public class PromptConstant {
         - A detailed description of the item.
         - A description of the condition of the item.
         - Any other relevant information that would help a potential buyer understand what is being sold.
-    
+
+    If the item is an animal, a person, a weapon, toxic waste, nuclear material or anything that looks like being restricted for sale or not legal, just return:
+        - Label: 'Not Allowed' + the item short descriptive description
+        - Condition: New
+        - Price: -1.00
+        - Brand: Unknown
+        - Model: Unknown
+        - Description: A full description of why it is not allowed to be sold.
     
     ### START Example of Title
     Title: Apple iPhone 12 Pro Max 256GB Pacific Blue

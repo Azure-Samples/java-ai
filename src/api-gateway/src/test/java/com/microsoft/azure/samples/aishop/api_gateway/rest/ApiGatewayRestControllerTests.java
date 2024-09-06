@@ -46,7 +46,7 @@ public class ApiGatewayRestControllerTests {
         final String expectedBlobName = "testBlobName";
         final String expectedBlobSasTokenUrl = "testBlobSasTokenUrl";
         ItemInfoDto expectedItemInfoDto = new ItemInfoDto(
-            "Item Name","Brand Name", "Model Name",
+            "Item Name","Brand Name", "Model Name", null,
             ItemCondition.NEW, 10.0, "Item Description"
         );
         

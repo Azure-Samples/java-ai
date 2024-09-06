@@ -1,0 +1,19 @@
+POST http://localhost:8084/categories/bootstrap
+
+###
+
+GET http://localhost:8084/categories
+
+###
+POST http://localhost:8084/categories/ai-item-categorization
+Content-Type: application/json
+
+{
+  "label": "Colorful Water Gun Toy",
+  "brand": "Unknown",
+  "model": "Unknown",
+  "category": null,
+  "condition": "NEW",
+  "price": 12.99,
+  "description": "This is a colorful water gun toy designed for outdoor fun. The water gun features a vibrant design with blue, orange, green, and white colors. It is made of durable plastic and is easy to use, making it perfect for children and adults alike. The water gun has a comfortable grip handle and a large water reservoir for extended playtime. Ideal for summer activities, pool parties, and beach outings. The item is brand new and in perfect condition, ready to provide hours of entertainment."
+}
