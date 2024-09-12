@@ -60,7 +60,7 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01'
   }
 }
 
-resource acaEnvironment_diagnosticSettings 'Microsoft.Insights/diagnosticsettings@2021-05-01-preview' = {
+resource containerAppsEnvironmentDiagnosticSettings 'Microsoft.Insights/diagnosticsettings@2021-05-01-preview' = {
   name: 'diagnostic-settings'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
@@ -74,6 +74,35 @@ resource acaEnvironment_diagnosticSettings 'Microsoft.Insights/diagnosticsetting
     }]
   }
   scope: containerAppsEnvironment
+}
+
+resource eurekaServer 'Microsoft.App/managedEnvironments/javaComponents@2024-02-02-preview' = {
+  parent: containerAppsEnvironment
+  name: 'eureka'
+  properties: {
+    componentType: 'SpringCloudEureka'
+    ingress: {}
+    configurations: [
+      {
+        propertyName: 'eureka.server.renewal-percent-threshold'
+        value: '0.85'
+      }
+      {
+        propertyName: 'eureka.server.eviction-interval-timer-in-ms'
+        value: '5000'
+      }
+    ]
+  }
+}
+
+resource springAdmin 'Microsoft.App/managedEnvironments/javaComponents@2024-02-02-preview' = {
+  parent: containerAppsEnvironment
+  name: 'spring-admin'
+  properties: {
+    componentType: 'SpringBootAdmin'
+    ingress: {}
+    configurations: []
+  }
 }
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-11-01-preview' existing = {
@@ -141,24 +170,6 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09
   }
 }
 
-resource eurekaServer 'Microsoft.App/managedEnvironments/javaComponents@2024-02-02-preview' = {
-  parent: containerAppsEnvironment
-  name: 'eureka'
-  properties: {
-    componentType: 'SpringCloudEureka'
-    ingress: {}
-    configurations: [
-      {
-        propertyName: 'eureka.server.renewal-percent-threshold'
-        value: '0.85'
-      }
-      {
-        propertyName: 'eureka.server.eviction-interval-timer-in-ms'
-        value: '5000'
-      }
-    ]
-  }
-}
 
 resource azureOpenAI 'Microsoft.CognitiveServices/accounts@2024-04-01-preview' = {
   name: azureOpenAIName
@@ -288,6 +299,9 @@ resource aiImageProcessingServiceContainerApp 'Microsoft.App/containerapps@2024-
         {
           serviceId: eurekaServer.id
         }
+        {
+          serviceId: springAdmin.id
+        }
       ]
     }
   }
@@ -364,6 +378,9 @@ resource apiGatewayContainerApp 'Microsoft.App/containerapps@2024-03-01' = {
         {
           serviceId: eurekaServer.id
         }
+        {
+          serviceId: springAdmin.id
+        }
       ]
     }
   }
@@ -432,6 +449,9 @@ resource blobStorageServiceContainerApp 'Microsoft.App/containerapps@2024-03-01'
       serviceBinds: [
         {
           serviceId: eurekaServer.id
+        }
+        {
+          serviceId: springAdmin.id
         }
       ]
     }
@@ -527,6 +547,9 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-03-0
       serviceBinds: [
         {
           serviceId: eurekaServer.id
+        }
+        {
+          serviceId: springAdmin.id
         }
       ]
     }

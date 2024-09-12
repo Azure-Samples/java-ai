@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -83,9 +84,18 @@ public class ItemCategoryRestController {
 
     @PostMapping("/ai-item-categorization")
     public ItemInfoDto categorizeItem(@RequestBody ItemInfoDto itemInfoDto) {
-        final ItemCategoryDto ItemCategoryDto =
+        final String answer =
             assistant.categorizeItem(PromptUtils.formatItemCategorizationUserPrompt(itemInfoDto));
-        itemInfoDto.setCategory(ItemCategoryDto);
+        System.out.println(answer);
+        ItemCategoryDto itemCategoryDto;
+        try {
+            final String jsonObjectAsAString = answer.replaceAll("```json", "").replaceAll("```", "");
+            itemCategoryDto = objectMapper.readValue(jsonObjectAsAString, ItemCategoryDto.class);
+            itemInfoDto.setCategory(itemCategoryDto);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        
         return itemInfoDto;
     }
     

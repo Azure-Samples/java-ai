@@ -1,11 +1,11 @@
-POST http://localhost:8084/categories/bootstrap
+POST https://ca-api-gateway-test.ashytree-f3146f63.eastus.azurecontainerapps.io/categories/bootstrap
 
 ###
 
-GET http://localhost:8084/categories
+GET https://ca-item-category-test-eus.livelymoss-9147bb0e.eastus.azurecontainerapps.io/categories
 
 ###
-POST http://localhost:8084/categories/ai-item-categorization
+POST https://ca-item-category-test-eus.livelymoss-9147bb0e.eastus.azurecontainerapps.io/categories/ai-item-categorization
 Content-Type: application/json
 
 {
