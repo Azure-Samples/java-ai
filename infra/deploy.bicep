@@ -11,19 +11,17 @@ param workloadName string = 'java-ai'
 )
 param environmentName string = 'dev'
 param keyVaultName string = 'kv${replace(workloadName, '-', '')}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
-param containerRegistryName string
 param storageAccountName string = 'st${replace(workloadName, '-', '')}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
 param storageAccountBlobContainerName string = 'aishopinbox'
 param azureOpenAIName string = 'aoi-${workloadName}-${environmentName}'
 param azureOpenAISubDomainName string = '${replace(workloadName, '-', '')}${take(uniqueString(resourceGroup().id), 5)}'
-param apiGatewayContainerAppName string = 'ca-api-gateway-${environmentName}'
+param logAnalyticsWorkspaceName string = 'log-${workloadName}-${environmentName}'
 param containerAppsEnvironmentName string = 'cae-${workloadName}-${environmentName}'
+param containerRegistryName string
+param acrPullUserManagedIdentityName string = 'umi-acr-pull-${environmentName}'
+param apiGatewayContainerAppName string = 'ca-api-gateway-${environmentName}'
 param imageProcessingServiceContainerAppName string = 'ca-ai-image-process-serv-${environmentName}'
 param blobStorageServiceContainerAppName string = 'ca-blob-storage-service-${environmentName}'
-param acrPullUserManagedIdentityName string = 'umi-acr-pull-${environmentName}'
-param logAnalyticsWorkspaceName string = 'log-${workloadName}-${environmentName}'
-
-param eurekaClientContainerAppName string = 'my-eureka-client'
 param itemCategoryServiceContainerAppName string = 'ca-item-category-${environmentName}'
 
 var acrPullRole = resourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
@@ -457,49 +455,6 @@ resource storageBlobDelegatorRoleAssignment 'Microsoft.Authorization/roleAssignm
     principalId: blobStorageServiceContainerApp.identity.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: storageBlobDelegatorRole
-  }
-}
-
-resource eurekaClientContainerApp 'Microsoft.App/containerapps@2024-03-01' = {
-  name: eurekaClientContainerAppName
-  location: location
-  identity: {
-    type: 'None'
-  }
-  properties: {
-    managedEnvironmentId: containerAppsEnvironment.id
-    workloadProfileName: 'Consumption'
-    configuration: {
-      activeRevisionsMode: 'Single'
-      ingress: {
-        external: true
-        targetPort: 8080
-        exposedPort: 0
-        transport: 'Auto'
-        allowInsecure: false
-      }
-    }
-    template: {
-      containers: [
-        {
-          image: 'mcr.microsoft.com/javacomponents/samples/sample-service-eureka-client:latest'
-          name: eurekaClientContainerAppName
-          resources: {
-            cpu: json('0.5')
-            memory: '1Gi'
-          }
-        }
-      ]
-      scale: {
-        minReplicas: 1
-        maxReplicas: 1
-      }
-      serviceBinds: [
-        {
-          serviceId: eurekaServer.id
-        }
-      ]
-    }
   }
 }
 
