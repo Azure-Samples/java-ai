@@ -6,6 +6,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class BlobStorageServiceApplicationTests {
 
+	static {
+		System.setProperty("STORAGE_ACCOUNT_NAME", "test");
+		System.setProperty("STORAGE_ACCOUNT_ENDPOINT", "https://test");
+		System.setProperty("STORAGE_ACCOUNT_CONTAINER_NAME", "test");
+	}
+
 	@Test
 	void contextLoads() {
 	}

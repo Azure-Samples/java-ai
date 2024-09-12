@@ -68,8 +68,15 @@ public class ItemCategoryRestController {
 
     @PostMapping("/bootstrap")
     public void bootstrap() throws StreamReadException, DatabindException, IOException {
-        final File  file = ResourceUtils.getFile("classpath:categories.json");
-        final List<Category> categories = objectMapper.readValue(file, new TypeReference<List<Category>>() {});
+        File  file;
+        List<Category> categories;
+        try {
+            file = ResourceUtils.getFile("classpath:categories.json");
+            categories = objectMapper.readValue(file, new TypeReference<List<Category>>() {});
+        } catch (IOException e) {
+            file = ResourceUtils.getFile("/categories.json");
+            categories = objectMapper.readValue(file, new TypeReference<List<Category>>() {});
+        }
         associateCategoriesSubcategoriesAndLevel2Subcategories(categories);
         categories.forEach(categoryRepository::save);
     }

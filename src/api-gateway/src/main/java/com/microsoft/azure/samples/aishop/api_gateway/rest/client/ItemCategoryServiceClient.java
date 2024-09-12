@@ -12,4 +12,6 @@ public interface ItemCategoryServiceClient {
     @RequestMapping(method = RequestMethod.POST, value = "/categories/ai-item-categorization")
     ItemInfoDto categorizeItem(@RequestBody final ItemInfoDto itemInfoDto);
     
+    @RequestMapping(method = RequestMethod.POST, value = "/categories/bootstrap")
+    void bootstrapCategories();
 }
