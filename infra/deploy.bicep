@@ -15,9 +15,14 @@ param storageAccountBlobContainerName string = 'aishopinbox'
 param azureOpenAIName string = 'aoi-${workloadName}-${environmentName}'
 param azureOpenAISubDomainName string = '${replace(workloadName, '-', '')}${take(uniqueString(resourceGroup().id), 5)}'
 param logAnalyticsWorkspaceName string = 'log-${workloadName}-${environmentName}'
-param containerAppsEnvironmentName string = 'cae-${workloadName}-${environmentName}'
+param postregSqlServerName string = 'psql-${workloadName}-${environmentName}'
+param postregSqlDatabaseName string = 'aishop'
+param postregSqlAdminUsername string = 'aishopadmin'
+@secure()
+param postregSqlAdminPassword string
 param containerRegistryName string
 param acrPullUserManagedIdentityName string = 'umi-acr-pull-${environmentName}'
+param containerAppsEnvironmentName string = 'cae-${workloadName}-${environmentName}'
 param apiGatewayContainerAppName string = 'ca-api-gateway-${environmentName}'
 param imageProcessingServiceContainerAppName string = 'ca-ai-image-process-serv-${environmentName}'
 param blobStorageServiceContainerAppName string = 'ca-blob-storage-service-${environmentName}'
@@ -183,6 +188,67 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09
     }
     publicNetworkAccessForIngestion: 'Enabled'
     publicNetworkAccessForQuery: 'Enabled'
+  }
+}
+
+resource postgreSqlServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-12-01-preview' = {
+  name: postregSqlServerName
+  location: location
+  sku: {
+    name: 'Standard_D4ds_v5'
+    tier: 'GeneralPurpose'
+  }
+  properties: {
+    replica: {
+      role: 'Primary'
+    }
+    storage: {
+      iops: 500
+      tier: 'P10'
+      storageSizeGB: 128
+      autoGrow: 'Disabled'
+    }
+    network: {
+      publicNetworkAccess: 'Enabled'
+    }
+    dataEncryption: {
+      type: 'SystemManaged'
+    }
+    authConfig: {
+      activeDirectoryAuth: 'Enabled'
+      passwordAuth: 'Enabled'
+    }
+    version: '16'
+    administratorLogin: postregSqlAdminUsername
+    administratorLoginPassword: postregSqlAdminPassword
+    backup: {
+      backupRetentionDays: 7
+      geoRedundantBackup: 'Disabled'
+    }
+    highAvailability: {
+      mode: 'SameZone'
+    }
+    replicationRole: 'Primary'
+  }
+}
+
+resource postgreSqlDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2023-12-01-preview' = {
+  parent: postgreSqlServer
+  name: postregSqlDatabaseName
+  properties: {
+    charset: 'UTF8'
+    collation: 'en_US.UTF8'
+  }
+}
+
+resource postgreSqlServerPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2024-04-01-preview' = {
+  parent: keyVault
+  name: 'psql-admin-password'
+  properties: {
+    attributes: {
+      enabled: true
+    }
+    value: postregSqlAdminPassword
   }
 }
 
@@ -516,6 +582,11 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-03-0
           keyVaultUrl: azureOpenAISecret.properties.secretUri
           identity: 'system'
         }
+        {
+          name: 'psql-admin-password'
+          keyVaultUrl: postgreSqlServerPasswordSecret.properties.secretUri
+          identity: 'system'
+        }
       ]
       activeRevisionsMode: 'Single'
       ingress: {
@@ -550,6 +621,18 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-03-0
               name: 'AZURE_OPENAI_DEPLOYMENT_NAME'
               value: gpt4oDeployment.name
             }
+            {
+              name: 'SPRING_DATASOURCE_URL'
+              value: 'jdbc:postgresql://${postgreSqlServer.properties.fullyQualifiedDomainName}/${postgreSqlDatabase.name}?sslmode=require'
+            }
+            {
+              name: 'SPRING_DATASOURCE_USERNAME'
+              value: postregSqlAdminUsername
+            }
+            {
+              name: 'SPRING_DATASOURCE_PASSWORD'
+              secretRef: 'psql-admin-password'
+            }
           ]
           resources: {
             cpu: json('0.5')
@@ -572,6 +655,26 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-03-0
         }
       ]
     }
+  }
+}
+
+resource azureOpenAISecretSecretUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(azureOpenAISecret.id, keyVault.id, keyVaultSecretUserRole, itemCategoryServiceContainerApps.id)
+  scope: azureOpenAISecret
+  properties: {
+    principalId: itemCategoryServiceContainerApps.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: keyVaultSecretUserRole
+  }
+}
+
+resource postgreSqlServerPasswordSecretSecretUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(postgreSqlServerPasswordSecret.id, keyVault.id, keyVaultSecretUserRole, itemCategoryServiceContainerApps.id)
+  scope: postgreSqlServerPasswordSecret
+  properties: {
+    principalId: itemCategoryServiceContainerApps.identity.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: keyVaultSecretUserRole
   }
 }
 
@@ -616,15 +719,5 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
         }
       ]
     }
-  }
-}
-
-resource azureOpenAISecretSecretUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(azureOpenAISecret.id, keyVault.id, keyVaultSecretUserRole, itemCategoryServiceContainerApps.id)
-  scope: azureOpenAISecret
-  properties: {
-    principalId: itemCategoryServiceContainerApps.identity.principalId
-    principalType: 'ServicePrincipal'
-    roleDefinitionId: keyVaultSecretUserRole
   }
 }
