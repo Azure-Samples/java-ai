@@ -56,20 +56,7 @@ const FileUpload = (props: any) => {
     setUploadedFileList(fileList);
     //setFileList(null);
     if (props.setData) {
-      props.setData({
-          "label": "Not Allowed - Toy Water Gun",
-          "brand": "Unknown",
-          "model": "Unknown",
-          "category": {
-              "category": "Restricted",
-              "subcategory": "Weapons",
-              "level2Subcategory": "Toy Weapons"
-          },
-          "condition": "New",
-          "price": -1.0,
-          "description": "This item is a toy water gun, which is not allowed to be sold due to restrictions on the sale of items that resemble weapons. The item is new and has never been used. It features two water tanks and a trigger mechanism for squirting water. Despite being a toy, it is categorized under items that are restricted for sale."
-      });
-      //props.setData(result);
+      props.setData(result);
     }
   };
   const uploading = progress > 0 && progress < 100;
