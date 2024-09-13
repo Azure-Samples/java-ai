@@ -2,6 +2,7 @@ targetScope = 'resourceGroup'
 
 param location string = resourceGroup().location
 param workloadName string = 'java-ai'
+param imageTag string = '1.1.0'
 @allowed([
   'dev'
   'test'
@@ -288,7 +289,7 @@ resource aiImageProcessingServiceContainerApp 'Microsoft.App/containerapps@2024-
     template: {
       containers: [
         {
-          image: '${containerRegistry.properties.loginServer}/ai-image-processing-service:1.0.0'
+          image: '${containerRegistry.properties.loginServer}/ai-image-processing-service:${imageTag}'
           name: 'ai-image-processing-service'
           env: [
             {
@@ -373,7 +374,7 @@ resource apiGatewayContainerApp 'Microsoft.App/containerapps@2024-03-01' = {
     template: {
       containers: [
         {
-          image: '${containerRegistry.properties.loginServer}/api-gateway:1.0.0'
+          image: '${containerRegistry.properties.loginServer}/api-gateway:${imageTag}'
           name: 'api-gateway'
           resources: {
             cpu: json('0.5')
@@ -431,7 +432,7 @@ resource blobStorageServiceContainerApp 'Microsoft.App/containerapps@2024-03-01'
     template: {
       containers: [
         {
-          image: '${containerRegistry.properties.loginServer}/blob-storage-service:1.0.0'
+          image: '${containerRegistry.properties.loginServer}/blob-storage-service:${imageTag}'
           name: 'blob-storage-service'
           env: [
             {
@@ -534,7 +535,7 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-03-0
     template: {
       containers: [
         {
-          image: '${containerRegistry.properties.loginServer}/item-category-service:1.0.0'
+          image: '${containerRegistry.properties.loginServer}/item-category-service:${imageTag}'
           name: 'item-category-service'
           env: [
             {
@@ -600,7 +601,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
     template: {
       containers: [
         {
-          image: '${containerRegistry.properties.loginServer}/ai-shop-ui:1.0.0'
+          image: '${containerRegistry.properties.loginServer}/ai-shop-ui:${imageTag}'
           name: 'ai-shop-ui'
           resources: {
             memory: '2Gi'
@@ -609,7 +610,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
           env: [
             {
               name: 'REACT_APP_API_URL'
-              value: apiGatewayContainerApp.properties.ingressUrl
+              value: '${apiGatewayContainerApp.properties.configuration.ingress.fqdn}/item-info'
             }
           ]
         }
