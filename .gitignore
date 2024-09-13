@@ -38,4 +38,3 @@ build/
 !.vscode/*.code-snippets
 
 **/*.jpg
-**/*.png
