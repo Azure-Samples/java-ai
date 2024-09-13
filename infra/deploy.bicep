@@ -610,7 +610,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
           env: [
             {
               name: 'REACT_APP_API_URL'
-              value: '${apiGatewayContainerApp.properties.configuration.ingress.fqdn}/item-info'
+              value: 'https://${apiGatewayContainerApp.properties.configuration.ingress.fqdn}/item-info'
             }
           ]
         }
