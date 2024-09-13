@@ -2,13 +2,11 @@ targetScope = 'resourceGroup'
 
 param location string = resourceGroup().location
 param workloadName string = 'java-ai'
-@allowed(
-  [
-    'dev'
-    'test'
-    'prod'
-  ]
-)
+@allowed([
+  'dev'
+  'test'
+  'prod'
+])
 param environmentName string = 'dev'
 param keyVaultName string = 'kv${replace(workloadName, '-', '')}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
 param storageAccountName string = 'st${replace(workloadName, '-', '')}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
@@ -23,12 +21,25 @@ param apiGatewayContainerAppName string = 'ca-api-gateway-${environmentName}'
 param imageProcessingServiceContainerAppName string = 'ca-ai-image-process-serv-${environmentName}'
 param blobStorageServiceContainerAppName string = 'ca-blob-storage-service-${environmentName}'
 param itemCategoryServiceContainerAppName string = 'ca-item-category-${environmentName}'
+param aiShopUiContainerAppName string = 'ca-aishop-ui-${environmentName}'
 
 var acrPullRole = resourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
-var keyVaultSecretUserRole = resourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
-var storageBlobDelegatorRole = resourceId('Microsoft.Authorization/roleDefinitions', 'db58b8e5-c6ad-4a2a-8342-4190687cbf4a')
-var storageBlobDataContributorRole = resourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')
-var cognitiveServicesOpenAIUserRole = resourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
+var keyVaultSecretUserRole = resourceId(
+  'Microsoft.Authorization/roleDefinitions',
+  '4633458b-17de-408a-b874-0445c86b69e6'
+)
+var storageBlobDelegatorRole = resourceId(
+  'Microsoft.Authorization/roleDefinitions',
+  'db58b8e5-c6ad-4a2a-8342-4190687cbf4a'
+)
+var storageBlobDataContributorRole = resourceId(
+  'Microsoft.Authorization/roleDefinitions',
+  'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+)
+var cognitiveServicesOpenAIUserRole = resourceId(
+  'Microsoft.Authorization/roleDefinitions',
+  '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
+)
 
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: containerAppsEnvironmentName
@@ -64,14 +75,18 @@ resource containerAppsEnvironmentDiagnosticSettings 'Microsoft.Insights/diagnost
   name: 'diagnostic-settings'
   properties: {
     workspaceId: logAnalyticsWorkspace.id
-    metrics: [{
-      category: 'AllMetrics'
-      enabled: true
-    }]
-    logs: [{
-      categoryGroup: 'allLogs'
-      enabled: true
-    }]
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+      }
+    ]
+    logs: [
+      {
+        categoryGroup: 'allLogs'
+        enabled: true
+      }
+    ]
   }
   scope: containerAppsEnvironment
 }
@@ -170,7 +185,6 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09
   }
 }
 
-
 resource azureOpenAI 'Microsoft.CognitiveServices/accounts@2024-04-01-preview' = {
   name: azureOpenAIName
   location: location
@@ -234,8 +248,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
 resource storageAccountBlobService 'Microsoft.Storage/storageAccounts/blobServices@2023-05-01' = {
   parent: storageAccount
   name: 'default'
-  properties: {
-  }
+  properties: {}
 }
 
 resource storageAccountBlobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-05-01' = {
@@ -459,7 +472,12 @@ resource blobStorageServiceContainerApp 'Microsoft.App/containerapps@2024-03-01'
 }
 
 resource storageBlobDataContributorRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(storageAccount.id, storageAccountBlobContainer.id, keyVaultSecretUserRole, blobStorageServiceContainerApp.id)
+  name: guid(
+    storageAccount.id,
+    storageAccountBlobContainer.id,
+    keyVaultSecretUserRole,
+    blobStorageServiceContainerApp.id
+  )
   scope: storageAccountBlobContainer
   properties: {
     principalId: blobStorageServiceContainerApp.identity.principalId
@@ -550,6 +568,50 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-03-0
         }
         {
           serviceId: springAdmin.id
+        }
+      ]
+    }
+  }
+}
+
+resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
+  name: aiShopUiContainerAppName
+  location: location
+  identity: {
+    type: 'SystemAssigned, UserAssigned'
+    userAssignedIdentities: {
+      '${acrPullUserManagedIdentity.id}': {}
+    }
+  }
+  properties: {
+    managedEnvironmentId: containerAppsEnvironment.id
+    configuration: {
+      ingress: {
+        external: true
+        targetPort: 80
+      }
+      registries: [
+        {
+          server: containerRegistry.properties.loginServer
+          identity: acrPullUserManagedIdentity.id
+        }
+      ]
+    }
+    template: {
+      containers: [
+        {
+          image: '${containerRegistry.properties.loginServer}/ai-shop-ui:1.0.0'
+          name: 'ai-shop-ui'
+          resources: {
+            memory: '2Gi'
+            cpu: 1
+          }
+          env: [
+            {
+              name: 'REACT_APP_API_URL'
+              value: apiGatewayContainerApp.properties.ingressUrl
+            }
+          ]
         }
       ]
     }

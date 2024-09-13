@@ -44,6 +44,11 @@ cd ../api-gateway
 docker build -t $CONTAINER_REGISTRY_NAME.azurecr.io/api-gateway:$TAG .
 docker push $CONTAINER_REGISTRY_NAME.azurecr.io/api-gateway:$TAG
 
+cd ../ai-shop-ui
+docker build -t $CONTAINER_REGISTRY_NAME.azurecr.io/ai-shop-ui:$TAG .
+docker push $CONTAINER_REGISTRY_NAME.azurecr.io/ai-shop-ui:$TAG
+
+
 # Deploy the rest of the infrastructure
 cd ../..
 DEPLOYMENT_NAME=$WORKLOAD_NAME-$ENVIRONMENT_NAME-deployment
