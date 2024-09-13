@@ -9,7 +9,7 @@ body {
 
 .background {
   background-color: #f7f7f7;
-  background-image: url('header.png');
+  background-image: url('header.production.png');
 }
 .purple-border {
   border: 10px solid #9b5de5;
