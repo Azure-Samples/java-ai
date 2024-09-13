@@ -232,6 +232,15 @@ resource postgreSqlServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-12-01-
   }
 }
 
+resource postgreSqlServerFirewallRule 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules@2023-12-01-preview' = {
+  parent: postgreSqlServer
+  name: 'AllowAll'
+  properties: {
+    startIpAddress: '0.0.0.0'
+    endIpAddress: '0.0.0.0'
+  }
+}
+
 resource postgreSqlDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2023-12-01-preview' = {
   parent: postgreSqlServer
   name: postregSqlDatabaseName
@@ -623,7 +632,7 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-03-0
             }
             {
               name: 'SPRING_DATASOURCE_URL'
-              value: 'jdbc:postgresql://${postgreSqlServer.properties.fullyQualifiedDomainName}/${postgreSqlDatabase.name}?sslmode=require'
+              value: 'jdbc:postgresql://${postgreSqlServer.properties.fullyQualifiedDomainName}/${postgreSqlDatabase.name}'
             }
             {
               name: 'SPRING_DATASOURCE_USERNAME'
