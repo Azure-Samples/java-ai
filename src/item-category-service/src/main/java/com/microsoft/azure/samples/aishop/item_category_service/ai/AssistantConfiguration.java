@@ -14,6 +14,6 @@ class AssistantConfiguration {
      */
     @Bean
     ChatMemory chatMemory() {
-        return MessageWindowChatMemory.withMaxMessages(10);
+        return MessageWindowChatMemory.withMaxMessages(1);
     }
 }
