@@ -43,8 +43,8 @@ public class AiImageProcessingRestController {
         @RequestParam("mimeType") @NotNull @Size(min = 1) final String mimeType) throws MalformedURLException {
         final AzureOpenAiChatOptions chatOptions = AzureOpenAiChatOptions.builder()
             .withDeploymentName("gpt-4o")
-            .withTemperature(0)
-            .withTopP(1)
+            .withTemperature(0d)
+            .withTopP(1d)
             .withMaxTokens(4000)
             .withResponseFormat(AzureOpenAiResponseFormat.JSON)
             .build();
