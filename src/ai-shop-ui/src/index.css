@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.background {
+  background-color: #f7f7f7;
+  background-image: url('header.production.png');
+}
+.purple-border {
+  border: 10px solid #9b5de5;
+  border-radius: 15px;
+}

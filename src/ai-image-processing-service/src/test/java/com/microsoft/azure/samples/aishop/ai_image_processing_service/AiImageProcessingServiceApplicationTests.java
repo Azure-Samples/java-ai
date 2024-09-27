@@ -6,6 +6,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class AiImageProcessingServiceApplicationTests {
 
+	static {
+		System.setProperty("AZURE_OPENAI_ENDPOINT", "https://test");
+	}
+
 	@Test
 	void contextLoads() {
 		AiImageProcessingServiceApplication.main(new String[] {});

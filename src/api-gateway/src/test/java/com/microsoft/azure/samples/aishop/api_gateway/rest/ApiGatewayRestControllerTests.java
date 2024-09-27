@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.samples.aishop.api_gateway.rest.client.AiImageProcessingServiceClient;
 import com.microsoft.azure.samples.aishop.api_gateway.rest.client.BlobStorageServiceClient;
-import com.microsoft.azure.samples.java_ai.common.dto.ItemCondition;
+import com.microsoft.azure.samples.aishop.api_gateway.rest.client.ItemCategoryServiceClient;
 import com.microsoft.azure.samples.java_ai.common.dto.ItemInfoDto;
 
 @RunWith(SpringRunner.class)
@@ -33,6 +33,9 @@ public class ApiGatewayRestControllerTests {
     
     @MockBean
     private AiImageProcessingServiceClient aiImageProcessingServiceClient;
+
+    @MockBean
+    private ItemCategoryServiceClient  itemCategoryServiceClient;
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,7 +50,7 @@ public class ApiGatewayRestControllerTests {
         final String expectedBlobSasTokenUrl = "testBlobSasTokenUrl";
         ItemInfoDto expectedItemInfoDto = new ItemInfoDto(
             "Item Name","Brand Name", "Model Name", null,
-            ItemCondition.NEW, 10.0, "Item Description"
+            "New", 10.0, "Item Description"
         );
         
         // Mocked request parameters
@@ -57,6 +60,7 @@ public class ApiGatewayRestControllerTests {
         when(blobStorageServiceClient.uploadFile(image)).thenReturn(expectedBlobName);
         when(blobStorageServiceClient.getSasTokenUrl(expectedBlobName, 500)).thenReturn(expectedBlobSasTokenUrl);
         when(aiImageProcessingServiceClient.getItemInfo(expectedBlobSasTokenUrl, image.getContentType())).thenReturn(expectedItemInfoDto);
+        when(itemCategoryServiceClient.categorizeItem(expectedItemInfoDto)).thenReturn(expectedItemInfoDto);
         
         // Perform the test
         final MvcResult result = mockMvc

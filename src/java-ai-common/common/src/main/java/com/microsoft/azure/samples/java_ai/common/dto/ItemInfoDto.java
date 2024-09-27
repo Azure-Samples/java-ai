@@ -8,14 +8,14 @@ public class ItemInfoDto {
   private String brand;
   private String model;
   private ItemCategoryDto category;
-  private ItemCondition condition;
+  private String condition;
   private double price;
   private String description;
 
   public ItemInfoDto() {
   }
   
-  public ItemInfoDto(final String label, final String brand, final String model, final ItemCategoryDto category, final ItemCondition condition, final double price, final String description) {
+  public ItemInfoDto(final String label, final String brand, final String model, final ItemCategoryDto category, final String condition, final double price, final String description) {
     this.label = label;
     this.brand = brand;
     this.model = model;
@@ -57,11 +57,11 @@ public class ItemInfoDto {
     this.category = category;
   }
 
-  public ItemCondition getCondition() {
+  public String getCondition() {
     return condition;
   }
 
-  public void setCondition(final ItemCondition condition) {
+  public void setCondition(final String condition) {
     this.condition = condition;
   }
 

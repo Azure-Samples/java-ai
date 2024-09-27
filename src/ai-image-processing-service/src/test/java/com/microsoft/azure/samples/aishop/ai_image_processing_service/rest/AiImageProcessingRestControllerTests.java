@@ -28,12 +28,15 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.samples.aishop.ai_image_processing_service.ai.PromptConstant;
-import com.microsoft.azure.samples.java_ai.common.dto.ItemCondition;
 import com.microsoft.azure.samples.java_ai.common.dto.ItemInfoDto;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(AiImageProcessingRestController.class)
 public class AiImageProcessingRestControllerTests {
+    
+    static {
+		System.setProperty("AZURE_OPENAI_ENDPOINT", "https://test");
+	}
 
     @MockBean
     private AzureOpenAiChatModel chatModel;
@@ -83,7 +86,7 @@ public class AiImageProcessingRestControllerTests {
         assertEquals("Item Name", actualItemInfoDto.getLabel());
         assertEquals("Brand Name", actualItemInfoDto.getBrand());
         assertEquals("Model Name", actualItemInfoDto.getModel());
-        assertEquals(ItemCondition.NEW, actualItemInfoDto.getCondition());
+        assertEquals("New", actualItemInfoDto.getCondition());
         assertEquals(10.0, actualItemInfoDto.getPrice(), 0.001);
         assertEquals("Item Description", actualItemInfoDto.getDescription());
         verify(chatClient, times(1)).prompt();

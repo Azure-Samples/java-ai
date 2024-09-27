@@ -6,12 +6,13 @@ import java.util.List;
 
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -27,6 +28,8 @@ import com.microsoft.azure.samples.aishop.item_category_service.repository.Subca
 import com.microsoft.azure.samples.java_ai.common.dto.ItemCategoryDto;
 import com.microsoft.azure.samples.java_ai.common.dto.ItemInfoDto;
 
+import dev.langchain4j.memory.ChatMemory;
+
 @RestController()
 @RequestMapping("/categories")
 public class ItemCategoryRestController {
@@ -39,16 +42,20 @@ public class ItemCategoryRestController {
 
     private final Assistant assistant;
 
+    private final ChatMemory chatMemory;
+
     public ItemCategoryRestController(final CategoryRepository categoryRepository,
                                               final SubcategoryRepository subcategoryRepository,
                                               final Level2SubcategoryRepository level2SubcategoryRepository,
                                            final ObjectMapper objectMapper,
-                                              final Assistant assistant) {
+                                              final Assistant assistant,
+                                              final ChatMemory chatMemory) {
         this.categoryRepository = categoryRepository;
         this.subcategoryRepository = subcategoryRepository;
         this.level2SubcategoryRepository = level2SubcategoryRepository;
         this.objectMapper = objectMapper;
         this.assistant = assistant;
+        this.chatMemory = chatMemory;
     }
 
     @GetMapping()
@@ -57,28 +64,44 @@ public class ItemCategoryRestController {
     }
 
     @GetMapping("/{categoryId}/subcategories")
-    public List<Subcategory> getSubcategories(@RequestParam(value = "categoryId") long categoryId) {
+    public List<Subcategory> getSubcategories(@PathVariable Long categoryId) {
         return subcategoryRepository.findByCategoryId(categoryId);
     }
 
     @GetMapping("/{categoryId}/subcategories/{subcategoryId}/level2-subcategories")
-    public List<Level2Subcategory> getLevel2Subcategories(@RequestParam(value = "subcategoryId") long subcategoryId) {
+    public List<Level2Subcategory> getLevel2Subcategories(@PathVariable Long subcategoryId) {
         return level2SubcategoryRepository.findBySubcategoryId(subcategoryId);
     }
 
     @PostMapping("/bootstrap")
     public void bootstrap() throws StreamReadException, DatabindException, IOException {
-        final File  file = ResourceUtils.getFile("classpath:categories.json");
-        final List<Category> categories = objectMapper.readValue(file, new TypeReference<List<Category>>() {});
+        File  file;
+        List<Category> categories;
+        try {
+            file = ResourceUtils.getFile("classpath:categories.json");
+            categories = objectMapper.readValue(file, new TypeReference<List<Category>>() {});
+        } catch (IOException e) {
+            file = ResourceUtils.getFile("/categories.json");
+            categories = objectMapper.readValue(file, new TypeReference<List<Category>>() {});
+        }
         associateCategoriesSubcategoriesAndLevel2Subcategories(categories);
         categories.forEach(categoryRepository::save);
     }
 
     @PostMapping("/ai-item-categorization")
     public ItemInfoDto categorizeItem(@RequestBody ItemInfoDto itemInfoDto) {
-        final ItemCategoryDto ItemCategoryDto =
+        final String answer =
             assistant.categorizeItem(PromptUtils.formatItemCategorizationUserPrompt(itemInfoDto));
-        itemInfoDto.setCategory(ItemCategoryDto);
+        System.out.println(answer);
+        ItemCategoryDto itemCategoryDto;
+        try {
+            final String jsonObjectAsAString = answer.replaceAll("```json", "").replaceAll("```", "");
+            itemCategoryDto = objectMapper.readValue(jsonObjectAsAString, ItemCategoryDto.class);
+            itemInfoDto.setCategory(itemCategoryDto);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        chatMemory.clear();
         return itemInfoDto;
     }
     

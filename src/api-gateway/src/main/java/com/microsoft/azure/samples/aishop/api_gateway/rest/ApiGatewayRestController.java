@@ -12,6 +12,7 @@ import com.microsoft.azure.samples.java_ai.common.dto.ItemInfoDto;
 
 import jakarta.validation.constraints.NotNull;
 
+
 @RestController
 public class ApiGatewayRestController {
     
@@ -34,6 +35,11 @@ public class ApiGatewayRestController {
         ItemInfoDto itemInfoDto = aiImageProcessingServiceClient.getItemInfo(blobSasTokenUrl, image.getContentType());
         itemInfoDto = itemCategoryServiceClient.categorizeItem(itemInfoDto);
         return itemInfoDto;
+    }
+
+    @PostMapping("/categories/bootstrap")
+    public void postMethodName() {
+        itemCategoryServiceClient.bootstrapCategories();
     }
     
 }
