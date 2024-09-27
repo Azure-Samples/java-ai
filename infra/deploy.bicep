@@ -191,47 +191,6 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09
   }
 }
 
-resource postgreSqlServer 'Microsoft.DBforPostgreSQL/flexibleServers@2023-12-01-preview' = {
-  name: postregSqlServerName
-  location: location
-  sku: {
-    name: 'Standard_D4ds_v5'
-    tier: 'GeneralPurpose'
-  }
-  properties: {
-    replica: {
-      role: 'Primary'
-    }
-    storage: {
-      iops: 500
-      tier: 'P10'
-      storageSizeGB: 128
-      autoGrow: 'Disabled'
-    }
-    network: {
-      publicNetworkAccess: 'Enabled'
-    }
-    dataEncryption: {
-      type: 'SystemManaged'
-    }
-    authConfig: {
-      activeDirectoryAuth: 'Enabled'
-      passwordAuth: 'Enabled'
-    }
-    version: '16'
-    administratorLogin: postregSqlAdminUsername
-    administratorLoginPassword: postregSqlAdminPassword
-    backup: {
-      backupRetentionDays: 7
-      geoRedundantBackup: 'Disabled'
-    }
-    highAvailability: {
-      mode: 'SameZone'
-    }
-    replicationRole: 'Primary'
-  }
-}
-
 resource azureOpenAI 'Microsoft.CognitiveServices/accounts@2024-04-01-preview' = {
   name: azureOpenAIName
   location: location
