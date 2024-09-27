@@ -15,11 +15,6 @@ param storageAccountBlobContainerName string = 'aishopinbox'
 param azureOpenAIName string = 'aoi-${workloadName}-${environmentName}'
 param azureOpenAISubDomainName string = '${replace(workloadName, '-', '')}${take(uniqueString(resourceGroup().id), 5)}'
 param logAnalyticsWorkspaceName string = 'log-${workloadName}-${environmentName}'
-param postregSqlServerName string = 'psql-${workloadName}-${environmentName}'
-param postregSqlDatabaseName string = 'aishop'
-param postregSqlAdminUsername string = 'aishopadmin'
-@secure()
-param postregSqlAdminPassword string
 param containerRegistryName string
 param acrPullUserManagedIdentityName string = 'umi-acr-pull-${environmentName}'
 param containerAppsEnvironmentName string = 'cae-${workloadName}-${environmentName}'
