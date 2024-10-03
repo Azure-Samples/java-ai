@@ -19,6 +19,7 @@ const FileUpload = (props: any) => {
   const [shouldHighlight, setShouldHighlight] = useState(false);
   const [uploaded, setUploaded] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [loading, setLoading] = useState(false);
   const preventDefaultHandler = (e: React.DragEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -34,8 +35,12 @@ const FileUpload = (props: any) => {
         REACT_APP_API_URL: "http://localhost:8080/upload",
       };
     }
-    const UPLOAD_URL = window._env_.REACT_APP_API_URL;
 
+
+    const UPLOAD_URL = window._env_.REACT_APP_API_URL;
+    //let UPLOAD_URL = "https://ca-api-gateway-dev.redpebble-17f80563.swedencentral.azurecontainerapps.io/item-info"
+
+    setLoading(true);
     const data = new FormData();
     for (let file of fileList!) {
       data.append("image", file);
@@ -57,11 +62,13 @@ const FileUpload = (props: any) => {
     //setFileList(null);
     if (props.setData) {
       props.setData(result);
+      setLoading(false);
     }
   };
   const uploading = progress > 0 && progress < 100;
   return (
     <div>
+
       <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10" 
         onDragOver={(e) => {
           preventDefaultHandler(e);
@@ -82,10 +89,10 @@ const FileUpload = (props: any) => {
           setShouldHighlight(false);
         }}
       >
+
         { uploaded }
         { !uploaded && <div className="text-center">
-         
-
+        
           { !fileList ? ( <>
             <PhotoIcon aria-hidden="true" className="mx-auto h-12 w-12 text-gray-300" />
             <div className="mt-4 flex text-sm leading-6 text-gray-600">
@@ -139,6 +146,7 @@ const FileUpload = (props: any) => {
                 </>
               )}
         </div> }
+       
         {uploaded && uploadedFileList && <div className="flex flex-col items-center">
             {uploadedFileList.map((file, i) => {
               return <div>
@@ -148,6 +156,9 @@ const FileUpload = (props: any) => {
             </div>
           }
       </div> 
+        
+      { loading && <div className="loading"><span className="loader"></span></div>}
+
     </div>
   );
 };
