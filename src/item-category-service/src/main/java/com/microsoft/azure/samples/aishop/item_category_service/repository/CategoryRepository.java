@@ -18,5 +18,7 @@ public interface CategoryRepository extends Repository<Category, Long> {
 
     List<Category> findAllByOrderByNameAsc();
 
-    void delete(Category category);   
+    void delete(Category category);
+
+    void deleteAll();
 }
