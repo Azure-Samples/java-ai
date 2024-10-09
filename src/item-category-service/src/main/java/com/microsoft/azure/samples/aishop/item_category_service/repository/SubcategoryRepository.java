@@ -18,4 +18,6 @@ public interface SubcategoryRepository extends Repository<Subcategory, Long> {
     List<Subcategory> findByCategoryId(Long categoryId);
 
     void delete(Subcategory subcategory);
+
+    void deleteAll();
 }

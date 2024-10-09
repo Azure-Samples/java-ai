@@ -17,5 +17,6 @@ public interface Level2SubcategoryRepository extends Repository<Level2Subcategor
     List<Level2Subcategory> findBySubcategoryId(Long subcategoryId);
 
     void delete(Level2Subcategory level2Subcategory);
-    
+
+    void deleteAll();
 }

@@ -1,6 +1,6 @@
 LOCATION=swedencentral
 ENVIRONMENT_NAME=dev
-WORKLOAD_NAME=java-ai
+WORKLOAD_NAME=aishop
 RESOURCE_GROUP_NAME=rg-$WORKLOAD_NAME-$ENVIRONMENT_NAME
 
 # Create a resource group

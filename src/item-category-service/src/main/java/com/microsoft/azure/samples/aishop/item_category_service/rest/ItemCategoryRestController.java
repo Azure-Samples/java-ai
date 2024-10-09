@@ -37,13 +37,23 @@ public class ItemCategoryRestController {
     private final CategoryRepository categoryRepository;
     private final SubcategoryRepository subcategoryRepository;
     private final Level2SubcategoryRepository level2SubcategoryRepository;
-
     private final ObjectMapper objectMapper;
-
     private final Assistant assistant;
-
     private final ChatMemory chatMemory;
 
+    /**
+     * REST controller for managing item categories.
+     * The constructor initializes the controller with
+     * the necessary repositories and services. Then, it
+     * bootstraps the data in the database.
+     *
+     * @param categoryRepository the repository for managing categories
+     * @param subcategoryRepository the repository for managing subcategories
+     * @param level2SubcategoryRepository the repository for managing level 2 subcategories
+     * @param objectMapper the object mapper for JSON processing
+     * @param assistant the assistant service for AI interactions
+     * @param chatMemory the chat memory service for storing chat history
+     */
     public ItemCategoryRestController(final CategoryRepository categoryRepository,
                                               final SubcategoryRepository subcategoryRepository,
                                               final Level2SubcategoryRepository level2SubcategoryRepository,
@@ -56,6 +66,18 @@ public class ItemCategoryRestController {
         this.objectMapper = objectMapper;
         this.assistant = assistant;
         this.chatMemory = chatMemory;
+        this.init();
+    }
+
+    /**
+     * Bootstraps data in the database by reading the categories.json file.
+     */
+    public void init() {
+        try {
+            this.bootstrap();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @GetMapping()
@@ -75,6 +97,7 @@ public class ItemCategoryRestController {
 
     @PostMapping("/bootstrap")
     public void bootstrap() throws StreamReadException, DatabindException, IOException {
+        this.cleanupDatabase();
         File  file;
         List<Category> categories;
         try {
@@ -84,12 +107,13 @@ public class ItemCategoryRestController {
             file = ResourceUtils.getFile("/categories.json");
             categories = objectMapper.readValue(file, new TypeReference<List<Category>>() {});
         }
-        associateCategoriesSubcategoriesAndLevel2Subcategories(categories);
+        this.associateCategoriesSubcategoriesAndLevel2Subcategories(categories);
         categories.forEach(categoryRepository::save);
     }
 
     @PostMapping("/ai-item-categorization")
     public ItemInfoDto categorizeItem(@RequestBody ItemInfoDto itemInfoDto) {
+        chatMemory.clear();
         final String answer =
             assistant.categorizeItem(PromptUtils.formatItemCategorizationUserPrompt(itemInfoDto));
         System.out.println(answer);
@@ -122,5 +146,16 @@ public class ItemCategoryRestController {
                 });
             });
         });
+    }
+
+
+    /**
+     * Cleans up the database by deleting all entries from the level 2 subcategory,
+     * subcategory, and category repositories.
+     */
+    private void cleanupDatabase() {
+        level2SubcategoryRepository.deleteAll();
+        subcategoryRepository.deleteAll();
+        categoryRepository.deleteAll();
     }
 }
