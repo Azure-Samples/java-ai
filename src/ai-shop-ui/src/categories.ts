@@ -1,4 +1,5 @@
 export const categories = [
+    "unknown",
     "Electronics",
     "Fashion",
     "Video Games",
@@ -12,6 +13,7 @@ export const categories = [
   ];
   
   export const subcategories = [
+    "unknown",
     "Mobile Phones",
     "Laptops",
     "Tablets",
@@ -58,6 +60,7 @@ export const categories = [
   ];
 
   export const subsubcategories = [
+    "unknown",
     "iPhones",
     "Android Phones",
     "Windows Phones",

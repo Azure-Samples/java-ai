@@ -39,7 +39,7 @@ function App() {
         </div>
         <div className="container mx-auto p-12 bg-white rounded-lg shadow-lg my-20">
 
-        { data && data.category && data.category.category === "Restricted" && <div className="mb-4  p-4 border border-red-400 text-red-700 bg-red-100 rounded">
+        { data && data.label && data.label !== "" && data.label.indexOf("Not Allowed") > -1 && <div className="mb-4  p-4 border border-red-400 text-red-700 bg-red-100 rounded">
                 <p>This item is restricted to sell.</p>
               </div> }
 
@@ -116,14 +116,15 @@ function App() {
                     Price
                   </label>
                   <div className="mt-2">
-                    <input
+                  { data && data.label && data.label !== "" && data.label.indexOf("Not Allowed") > -1 && <div>Not allowed to sell</div> }
+                  { data && data.label && data.label !== "" && data.label.indexOf("Not Allowed") === -1 && <input
                       id="email"
                       name="email"
                       type="email"
                       autoComplete="email"
                       value={data.price}
                       className="block w-full rounded-md border-0 py-1.5  px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
+                    /> }
                   </div>
                 </div>
               </div>
@@ -248,6 +249,11 @@ function App() {
                           {category}
                         </option>
                         ))}
+
+
+                        <option key={data.category.category + "i"} value={data.category.category}>
+                          {data.category.category}
+                        </option>
                     </select>
                   </div>
                 </div>
@@ -270,6 +276,10 @@ function App() {
                           {category}
                         </option>
                         ))}
+
+                        <option key={data.category.subcategory + "i"} value={data.category.subcategory}>
+                          {data.category.subcategory}
+                        </option>
                     </select>
                   </div>
                 </div>
@@ -292,6 +302,10 @@ function App() {
                           {category}
                         </option>
                         ))}
+
+                        <option key={data.category.level2Subcategory + "i"} value={data.category.level2Subcategory}>
+                          {data.category.level2Subcategory}
+                        </option>
                     </select>
                   </div>
                 </div>
