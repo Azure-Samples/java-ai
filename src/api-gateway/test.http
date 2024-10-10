@@ -2,8 +2,8 @@ POST http://localhost:8081/item-info
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="image"; filename="image10.jpg"
+Content-Disposition: form-data; name="image"; filename="image.jpg"
 Content-Type: image/jpg
 
-< ./image10.jpg
+< ./image.jpg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--

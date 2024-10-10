@@ -60,3 +60,15 @@ az deployment group create \
   --parameters workloadName=$WORKLOAD_NAME \
   --parameters environmentName=$ENVIRONMENT_NAME \
   --parameters containerRegistryName="${CONTAINER_REGISTRY_NAME}"
+
+# Get the name of each Container App
+API_GATEWAY_NAME="$(az deployment group show --name $DEPLOYMENT_NAME --resource-group $RESOURCE_GROUP_NAME --query properties.outputs.apiGatewayContainerAppName.value -o tsv | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+AI_IMAGE_PROCESSING_SERVICE_NAME="$(az deployment group show --name $DEPLOYMENT_NAME --resource-group $RESOURCE_GROUP_NAME --query properties.outputs.imageProcessingServiceContainerAppName.value -o tsv | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+BLOB_STORAGE_SERVICE_NAME="$(az deployment group show --name $DEPLOYMENT_NAME --resource-group $RESOURCE_GROUP_NAME --query properties.outputs.imageProcessingServiceContainerAppName.value -o tsv | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+ITEM_CATEGORY_SERVICE_NAME="$(az deployment group show --name $DEPLOYMENT_NAME --resource-group $RESOURCE_GROUP_NAME --query properties.outputs.imageProcessingServiceContainerAppName.value -o tsv | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+
+# Update the runtime of each Container App to Java
+az containerapp update --name $API_GATEWAY_NAME --resource-group $RESOURCE_GROUP_NAME --runtime java --enable-java-metrics
+az containerapp update --name $AI_IMAGE_PROCESSING_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --runtime java --enable-java-metrics
+az containerapp update --name $BLOB_STORAGE_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --runtime java --enable-java-metrics
+az containerapp update --name $ITEM_CATEGORY_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --runtime java --enable-java-metrics

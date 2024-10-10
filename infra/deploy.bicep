@@ -1,28 +1,75 @@
 targetScope = 'resourceGroup'
 
+/* -------------------------------------------------------------------------- */
+/*                                 PARAMETERS                                 */
+/* -------------------------------------------------------------------------- */
+
+@description('The location of all resources.')
 param location string = resourceGroup().location
-param workloadName string = 'java-ai'
+
+@description('The name of the workload.')
+param workloadName string = 'ai-shop'
+
+@description('The tag of the image to deploy.')
 param imageTag string = '1.1.0'
+
+@description('The environment name.')
 @allowed([
   'dev'
   'test'
   'prod'
 ])
 param environmentName string = 'dev'
+
+/* ----------------------------- Infrastructure ----------------------------- */
+
+@description('The name of the key vault. Default to "kv<workloadName><environmentName><uniqueString(resourceGroup().id)>".')
 param keyVaultName string = 'kv${replace(workloadName, '-', '')}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
+
+@description('The name of the storage account. Default to "st<workloadName><environmentName><uniqueString(resourceGroup().id)>".')
 param storageAccountName string = 'st${replace(workloadName, '-', '')}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
+
+@description('The name of the storage account blob container. Default to "aishopinbox".')
 param storageAccountBlobContainerName string = 'aishopinbox'
+
+@description('The name of the Azure OpenAI resource. Default to "aoi-<workloadName>-<environmentName>".')
 param azureOpenAIName string = 'aoi-${workloadName}-${environmentName}'
+
+@description('The subdomain name of the Azure OpenAI resource. Default to "<workloadName><take(uniqueString(resourceGroup().id), 5)>".')
 param azureOpenAISubDomainName string = '${replace(workloadName, '-', '')}${take(uniqueString(resourceGroup().id), 5)}'
+
+@description('The name of the Log Analytics workspace. Default to "log-<workloadName>-<environmentName>".')
 param logAnalyticsWorkspaceName string = 'log-${workloadName}-${environmentName}'
+
+@description('The name of the container registry.')
 param containerRegistryName string
-param acrPullUserManagedIdentityName string = 'umi-acr-pull-${environmentName}'
+
+@description('The name of the user-managed identity for ACR pull. Default to "umi-acr-pull-<containerRegistryName>".')
+param acrPullUserManagedIdentityName string = 'umi-acr-pull-${containerRegistryName}'
+
+@description('The name of the container apps environment. Default to "cae-<workloadName>-<environmentName>".')
 param containerAppsEnvironmentName string = 'cae-${workloadName}-${environmentName}'
+
+/* ----------------------------- Container Apps ----------------------------- */
+
+@description('The name of the API gateway container app. Default to "ca-api-gateway-<environmentName>".')
 param apiGatewayContainerAppName string = 'ca-api-gateway-${environmentName}'
+
+@description('The name of the image processing service container app. Default to "ca-ai-image-process-serv-<environmentName>".')
 param imageProcessingServiceContainerAppName string = 'ca-ai-image-process-serv-${environmentName}'
+
+@description('The name of the blob storage service container app. Default to "ca-blob-storage-service-<environmentName>".')
 param blobStorageServiceContainerAppName string = 'ca-blob-storage-service-${environmentName}'
+
+@description('The name of the item category service container app. Default to "ca-item-category-<environmentName>".')
 param itemCategoryServiceContainerAppName string = 'ca-item-category-${environmentName}'
+
+@description('The name of the AI shop UI container app. Default to "ca-aishop-ui-<environmentName>".')
 param aiShopUiContainerAppName string = 'ca-aishop-ui-${environmentName}'
+
+/* -------------------------------------------------------------------------- */
+/*                                  VARIABLES                                 */
+/* -------------------------------------------------------------------------- */
 
 var acrPullRole = resourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
 var keyVaultSecretUserRole = resourceId(
@@ -41,6 +88,12 @@ var cognitiveServicesOpenAIUserRole = resourceId(
   'Microsoft.Authorization/roleDefinitions',
   '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
 )
+
+/* -------------------------------------------------------------------------- */
+/*                                  RESOURCES                                 */
+/* -------------------------------------------------------------------------- */
+
+/* ----------------------- Container Apps Environment ----------------------- */
 
 resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: containerAppsEnvironmentName
@@ -121,9 +174,28 @@ resource springAdmin 'Microsoft.App/managedEnvironments/javaComponents@2024-02-0
   }
 }
 
+/* --------------------------- Container Registry --------------------------- */
+
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-11-01-preview' existing = {
   name: containerRegistryName
 }
+
+resource acrPullUserManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
+  name: acrPullUserManagedIdentityName
+  location: location
+}
+
+resource containerRegistryAcrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(containerRegistry.id, acrPullUserManagedIdentity.id, acrPullRole)
+  scope: containerRegistry
+  properties: {
+    principalId: acrPullUserManagedIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+    roleDefinitionId: acrPullRole
+  }
+}
+
+/* -------------------------------- Key Vault ------------------------------- */
 
 resource keyVault 'Microsoft.KeyVault/vaults@2024-04-01-preview' = {
   name: keyVaultName
@@ -150,20 +222,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2024-04-01-preview' = {
   }
 }
 
-resource acrPullUserManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
-  name: acrPullUserManagedIdentityName
-  location: location
-}
-
-resource containerRegistryAcrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(containerRegistry.id, acrPullUserManagedIdentity.id, acrPullRole)
-  scope: containerRegistry
-  properties: {
-    principalId: acrPullUserManagedIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-    roleDefinitionId: acrPullRole
-  }
-}
+/* ------------------------------- Monitoring ------------------------------- */
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   name: logAnalyticsWorkspaceName
@@ -185,6 +244,8 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09
     publicNetworkAccessForQuery: 'Enabled'
   }
 }
+
+/* ------------------------------ Azure OpenAI ------------------------------ */
 
 resource azureOpenAI 'Microsoft.CognitiveServices/accounts@2024-04-01-preview' = {
   name: azureOpenAIName
@@ -229,6 +290,8 @@ resource azureOpenAISecret 'Microsoft.KeyVault/vaults/secrets@2024-04-01-preview
   }
 }
 
+/* --------------------------------- Storage -------------------------------- */
+
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
   location: location
@@ -257,7 +320,9 @@ resource storageAccountBlobContainer 'Microsoft.Storage/storageAccounts/blobServ
   name: storageAccountBlobContainerName
 }
 
-resource aiImageProcessingServiceContainerApp 'Microsoft.App/containerapps@2024-03-01' = {
+/* ----------------------------- Container Apps ----------------------------- */
+
+resource aiImageProcessingServiceContainerApp 'Microsoft.App/containerApps@2024-03-01' = {
   name: imageProcessingServiceContainerAppName
   location: location
   identity: {
@@ -628,3 +693,19 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
     }
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                   OUTPUTS                                  */
+/* -------------------------------------------------------------------------- */
+
+@description('The name of the API gateway container app.')
+output apiGatewayContainerAppName string = apiGatewayContainerApp.name
+
+@description('The name of the image processing service container app.')
+output imageProcessingServiceContainerAppName string = aiImageProcessingServiceContainerApp.name
+
+@description('The name of the blob storage service container app.')
+output blobStorageServiceContainerAppName string = blobStorageServiceContainerApp.name
+
+@description('The name of the item category service container app.')
+output itemCategoryServiceContainerAppName string = itemCategoryServiceContainerApps.name
