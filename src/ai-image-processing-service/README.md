@@ -10,6 +10,15 @@ This service is responsible for processing images using AI models. It is a RESTf
 
 The service uses the Azure OpenAI API GPT-4o to generate the information based on the image. The information is then returned to the caller.
 
+## Prerequisites
+
+Easiest way to start is to [deploy a GitHub Codespace](https://github.com/codespaces/new/Azure-Samples/java-ai) as it contains all the prerequisites.
+
+If you deploy locally, you need to have the following installed:
+- [Java 17+](https://learn.microsoft.com/en-us/java/openjdk/download)
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+- [Docker](https://docs.docker.com/get-docker/) or [Podman](https://podman.io/getting-started/installation)
+
 ## Run locally
 
 To run the AI Image Processing Service locally, you need first to build the common module and then start the service. Follow the instructions below in the order they are presented:

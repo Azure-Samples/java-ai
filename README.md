@@ -8,7 +8,7 @@ The functional architecture of the application is as follows:
 - `src/eureka-server`: The Eureka Server of the application. It is simple Eureka Server that is only required for local development.
 - `src/ai-image-processing-service`: The AI Image Processing Service of the application. It is a Spring Boot application that uses `Spring AI` to generate the product information based on the image.
 - `src/blob-storage-service`: The Blob Storage Service of the application. It is a Spring Boot application that uses `Spring Cloud Azure` to store the images in Azure Blob Storage. It also provide the generation of the image URL with a SAS token for the `ai-image-processing-service`.
-- `src/item-category-service`: The Item Category Service of the application. It is a Spring Boot application that provides the categories of the items that can be sold in the shop. It uses `Spring Data JPA` to store the categories in a `H2` database. It is infused with AI and uses `LangChain4J` to generate the categories based on the product description.
+- `src/item-category-service`: The Item Category Service of the application. It is a Spring Boot application that provides the categories of the items that can be sold in the shop. It uses `Spring Data JPA` to store the categories in a `H2` database. It is infused with AI and uses `LangChain4j` to generate the categories based on the product description.
 - `src/java-ai-common`: A common module that is used by all the services. It contains the common DTOs.
 
 ![Functional Architecture](./media/functional-architecture.png)
@@ -40,7 +40,7 @@ The following resources will be created as represented in the diagram below:
 
 ![Azure Architecture](./media/azure-architecture.png)
 
-### Fast deployment
+### Quick start
 
 To deploy the AI Shop to Azure, you need only to use the provided `deploy.sh` script. The script will create the necessary resources in Azure and deploy the services to Azure Container Apps. Follow the instructions below:
 
@@ -62,6 +62,105 @@ The deployment script has 3 main steps:
 1. Create the resource group and the Container Registry
 2. Build the images and push them to the Container Registry
 3. Deploy the rest of the infrastructure and the services to Azure Container Apps
+
+### Manual deployment
+
+If you want to deploy the AI Shop manually, follow the instructions below:
+
+1. Set the environment variables:
+
+    ```bash
+    LOCATION=<your-location>
+    RESOURCE_GROUP_NAME=<your-resource-group-name>
+    WORKLOAD_NAME=<your-workload-name>
+    ```
+
+2. Create the resource group:
+
+    ```bash
+    az group create --name $RESOURCE_GROUP_NAME --location $LOCATION
+    ```
+
+3. Create the Azure Container Registry:
+
+    ```bash
+    CONTAINER_REGISTRY_DEPLOYMENT_NAME=$WORKLOAD_NAME-$ENVIRONMENT_NAME-acr-deployment
+    az deployment group create \
+        --name $CONTAINER_REGISTRY_DEPLOYMENT_NAME \
+        --resource-group $RESOURCE_GROUP_NAME \
+        --template-file infra/deploy-container-registry.bicep \
+        --parameters workloadName=$WORKLOAD_NAME \
+        --parameters environmentName=$ENVIRONMENT_NAME
+    ```
+
+4. Build the images and push them to the Azure Container Registry:
+
+    ```bash
+    CONTAINER_REGISTRY_NAME="$(az deployment group show --name $CONTAINER_REGISTRY_DEPLOYMENT_NAME --resource-group $RESOURCE_GROUP_NAME --query properties.outputs.containerRegistryName.value -o tsv | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    TAG=1.1.0
+
+    az acr login --name $CONTAINER_REGISTRY_NAME
+
+    cd src/java-ai-common/common
+    ./mvnw clean install
+
+    cd ../../item-category-service
+    ./mvnw clean package
+    docker build -t $CONTAINER_REGISTRY_NAME.azurecr.io/item-category-service:$TAG .
+    docker push $CONTAINER_REGISTRY_NAME.azurecr.io/item-category-service:$TAG
+
+    cd ../ai-image-processing-service
+    ./mvnw clean package
+    docker build -t $CONTAINER_REGISTRY_NAME.azurecr.io/ai-image-processing-service:$TAG .
+    docker push $CONTAINER_REGISTRY_NAME.azurecr.io/ai-image-processing-service:$TAG
+
+    cd ../blob-storage-service
+    ./mvnw clean package
+    docker build -t $CONTAINER_REGISTRY_NAME.azurecr.io/blob-storage-service:$TAG .
+    docker push $CONTAINER_REGISTRY_NAME.azurecr.io/blob-storage-service:$TAG
+
+    cd ../api-gateway
+    ./mvnw clean package
+    docker build -t $CONTAINER_REGISTRY_NAME.azurecr.io/api-gateway:$TAG .
+    docker push $CONTAINER_REGISTRY_NAME.azurecr.io/api-gateway:$TAG
+
+    cd ../ai-shop-ui
+    docker build -t $CONTAINER_REGISTRY_NAME.azurecr.io/ai-shop-ui:$TAG .
+    docker push $CONTAINER_REGISTRY_NAME.azurecr.io/ai-shop-ui:$TAG
+    ```
+
+5. Deploy the rest of the infrastructure and the services to Azure Container Apps:
+
+    ```bash
+    cd ../..
+    DEPLOYMENT_NAME=$WORKLOAD_NAME-$ENVIRONMENT_NAME-deployment
+    az deployment group create \
+    --name $DEPLOYMENT_NAME \
+    --resource-group $RESOURCE_GROUP_NAME \
+    --template-file infra/deploy.bicep \
+    --parameters imageTag=$TAG \
+    --parameters workloadName=$WORKLOAD_NAME \
+    --parameters environmentName=$ENVIRONMENT_NAME \
+    --parameters containerRegistryName="${CONTAINER_REGISTRY_NAME}"
+    ```
+
+6. Get the name of each Java Container App:
+
+    ```bash
+    API_GATEWAY_NAME="$(az deployment group show --name $DEPLOYMENT_NAME --resource-group $RESOURCE_GROUP_NAME --query properties.outputs.apiGatewayContainerAppName.value -o tsv | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    AI_IMAGE_PROCESSING_SERVICE_NAME="$(az deployment group show --name $DEPLOYMENT_NAME --resource-group $RESOURCE_GROUP_NAME --query properties.outputs.imageProcessingServiceContainerAppName.value -o tsv | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    BLOB_STORAGE_SERVICE_NAME="$(az deployment group show --name $DEPLOYMENT_NAME --resource-group $RESOURCE_GROUP_NAME --query properties.outputs.imageProcessingServiceContainerAppName.value -o tsv | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    ITEM_CATEGORY_SERVICE_NAME="$(az deployment group show --name $DEPLOYMENT_NAME --resource-group $RESOURCE_GROUP_NAME --query properties.outputs.imageProcessingServiceContainerAppName.value -o tsv | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    ```
+
+7. Update the runtime of each Java Container App to Java:
+
+    ```bash
+    az containerapp update --name $API_GATEWAY_NAME --resource-group $RESOURCE_GROUP_NAME --runtime java --enable-java-metrics
+    az containerapp update --name $AI_IMAGE_PROCESSING_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --runtime java --enable-java-metrics
+    az containerapp update --name $BLOB_STORAGE_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --runtime java --enable-java-metrics
+    az containerapp update --name $ITEM_CATEGORY_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --runtime java --enable-java-metrics
+    ```
 
 ## Trademarks
 

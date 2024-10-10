@@ -1,6 +1,6 @@
 # Item Category Service
 
-This service is responsible for providing the categories of the items that can be sold in the shop. It is a RESTful service that returns the categories based on the product description. The service uses the LangChain4J library to generate the categories based on the product information.
+This service is responsible for providing the categories of the items that can be sold in the shop. It is a RESTful service that returns the categories based on the product description. The service uses the LangChain4j library to generate the categories based on the product information.
 
 ## Run locally
 
