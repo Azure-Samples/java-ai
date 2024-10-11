@@ -46,7 +46,7 @@ The following resources will be created as represented in the diagram below:
 - Azure Key Vault for the `item-category-service` Azure OpenAI API Key secret
 - User-assigned Managed Identity to pull the images from the Azure Container Registry
 - Azure OpenAI
-- [Azure Container Apps with Java Runtime](https://learn.microsoft.com/en-us/azure/container-apps/java-metrics)
+- [Azure Container Apps with Java Runtime](https://learn.microsoft.com/azure/container-apps/java-metrics)
 - Azure Logs Analytics Workspace for monitoring
 
 ![Azure Architecture](./media/azure-architecture.png)
