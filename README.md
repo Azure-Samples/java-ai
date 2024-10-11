@@ -17,7 +17,7 @@ The functional architecture of the application is as follows:
 
 Easiest way to start is to Fork and [open the repository in a GitHub Codespace](https://github.com/codespaces/new/Azure-Samples/java-ai) as it contains all the prerequisites.
 
-If you deploy locally, you need to have the following installed:
+If you develop locally, you need to have the following installed:
 - [Java 17+](https://learn.microsoft.com/java/openjdk/download)
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 - [Docker](https://docs.docker.com/get-docker/) or [Podman](https://podman.io/getting-started/installation)
