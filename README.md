@@ -39,7 +39,7 @@ To run the AI Shop locally, you need first to build the common module and then s
 The following resources will be created as represented in the diagram below:
 - Resource Group
 - Azure Container Registry
-- [Azure Container Apps Environment](https://learn.microsoft.com/en-us/azure/container-apps/)
+- [Azure Container Apps Environment](https://learn.microsoft.com/azure/container-apps/)
     - [Eureka Server for Spring Component](https://learn.microsoft.com/en-us/azure/container-apps/java-eureka-server-usage)
     - [Admin for Spring Component](https://learn.microsoft.com/en-us/azure/container-apps/java-admin-for-spring-usage)
 - Azure Blob Storage Account
