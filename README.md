@@ -15,7 +15,7 @@ The functional architecture of the application is as follows:
 
 ## Prerequisites
 
-Easiest way to start is to [deploy a GitHub Codespace](https://github.com/codespaces/new/Azure-Samples/java-ai) as it contains all the prerequisites.
+Easiest way to start is to Fork and [open the repository in a GitHub Codespace](https://github.com/codespaces/new/Azure-Samples/java-ai) as it contains all the prerequisites.
 
 If you deploy locally, you need to have the following installed:
 - [Java 17+](https://learn.microsoft.com/java/openjdk/download)
