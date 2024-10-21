@@ -13,6 +13,15 @@ The functional architecture of the application is as follows:
 
 ![Functional Architecture](./media/functional-architecture.png)
 
+## Prerequisites
+
+Easiest way to start is to Fork and [open the repository in a GitHub Codespace](https://github.com/codespaces/new/Azure-Samples/java-ai) as it contains all the prerequisites.
+
+If you develop locally, you need to have the following installed:
+- [Java 17+](https://learn.microsoft.com/java/openjdk/download)
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+- [Docker](https://docs.docker.com/get-docker/) or [Podman](https://podman.io/getting-started/installation)
+
 ## Run locally
 
 To run the AI Shop locally, you need first to build the common module and then start the services. Follow the instructions below in the order they are presented:
@@ -30,12 +39,14 @@ To run the AI Shop locally, you need first to build the common module and then s
 The following resources will be created as represented in the diagram below:
 - Resource Group
 - Azure Container Registry
-- Azure Container Apps Environment
+- [Azure Container Apps Environment](https://learn.microsoft.com/azure/container-apps/)
+    - [Eureka Server for Spring Component](https://learn.microsoft.com/en-us/azure/container-apps/java-eureka-server-usage)
+    - [Admin for Spring Component](https://learn.microsoft.com/en-us/azure/container-apps/java-admin-for-spring-usage)
 - Azure Blob Storage Account
 - Azure Key Vault for the `item-category-service` Azure OpenAI API Key secret
 - User-assigned Managed Identity to pull the images from the Azure Container Registry
 - Azure OpenAI
-- Azure Container Apps
+- [Azure Container Apps with Java Runtime](https://learn.microsoft.com/azure/container-apps/java-metrics)
 - Azure Logs Analytics Workspace for monitoring
 
 ![Azure Architecture](./media/azure-architecture.png)
