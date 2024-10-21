@@ -55,3 +55,4 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-11-01-pr
 }
 
 output containerRegistryName string = containerRegistry.name
+output acrLoginServer string = containerRegistry.properties.loginServer
