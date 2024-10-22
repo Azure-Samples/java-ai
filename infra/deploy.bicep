@@ -67,21 +67,6 @@ param itemCategoryServiceContainerAppName string = 'ca-item-category-${environme
 @description('The name of the AI shop UI container app. Default to "ca-aishop-ui-<environmentName>".')
 param aiShopUiContainerAppName string = 'ca-aishop-ui-${environmentName}'
 
-@description('The image name of the api gateway app')
-param apiGatewayImageName string
-
-@description('The image name of the image process app')
-param imageProcessingImageName string
-
-@description('The image name of the blob storage app')
-param blobStorageImageName string
-
-@description('The image name of item category app')
-param itemCategoryImageName string
-
-@description('The image name of the api gateway app')
-param aiShopUiImageName string
-
 /* -------------------------------------------------------------------------- */
 /*                                  VARIABLES                                 */
 /* -------------------------------------------------------------------------- */
@@ -220,7 +205,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2024-04-01-preview' = {
       family: 'A'
       name: 'standard'
     }
-    tenantId: subscription().tenantId
+    tenantId: 'e23b4cd4-9608-4f8d-9035-712eaabd9d28'
     networkAcls: {
       bypass: 'None'
       defaultAction: 'Allow'
@@ -337,7 +322,7 @@ resource storageAccountBlobContainer 'Microsoft.Storage/storageAccounts/blobServ
 
 /* ----------------------------- Container Apps ----------------------------- */
 
-resource aiImageProcessingServiceContainerApp 'Microsoft.App/containerApps@2024-02-02-preview' = {
+resource aiImageProcessingServiceContainerApp 'Microsoft.App/containerApps@2024-03-01' = {
   name: imageProcessingServiceContainerAppName
   location: location
   identity: {
@@ -365,16 +350,11 @@ resource aiImageProcessingServiceContainerApp 'Microsoft.App/containerApps@2024-
           identity: acrPullUserManagedIdentity.id
         }
       ]
-      runtime: {
-        java: {
-          enableMetrics: true
-        }
-      }
     }
     template: {
       containers: [
         {
-          image: !empty(imageProcessingImageName) ? imageProcessingImageName: '${containerRegistry.properties.loginServer}/ai-image-processing-service:${imageTag}'
+          image: '${containerRegistry.properties.loginServer}/ai-image-processing-service:${imageTag}'
           name: 'ai-image-processing-service'
           env: [
             {
@@ -416,7 +396,7 @@ resource cognitiveServicesOpenAIUserRoleAssignment 'Microsoft.Authorization/role
   }
 }
 
-resource apiGatewayContainerApp 'Microsoft.App/containerapps@2024-02-02-preview' = {
+resource apiGatewayContainerApp 'Microsoft.App/containerapps@2024-03-01' = {
   name: apiGatewayContainerAppName
   location: location
   identity: {
@@ -454,17 +434,12 @@ resource apiGatewayContainerApp 'Microsoft.App/containerapps@2024-02-02-preview'
           identity: acrPullUserManagedIdentity.id
         }
       ]
-      runtime: {
-        java: {
-          enableMetrics: true
-        }
-      }
       maxInactiveRevisions: 100
     }
     template: {
       containers: [
         {
-          image: !empty(apiGatewayImageName) ? apiGatewayImageName : '${containerRegistry.properties.loginServer}/api-gateway:${imageTag}'
+          image: '${containerRegistry.properties.loginServer}/api-gateway:${imageTag}'
           name: 'api-gateway'
           resources: {
             cpu: json('0.5')
@@ -490,7 +465,7 @@ resource apiGatewayContainerApp 'Microsoft.App/containerapps@2024-02-02-preview'
   }
 }
 
-resource blobStorageServiceContainerApp 'Microsoft.App/containerapps@2024-02-02-preview' = {
+resource blobStorageServiceContainerApp 'Microsoft.App/containerapps@2024-03-01' = {
   name: blobStorageServiceContainerAppName
   location: location
   identity: {
@@ -518,16 +493,11 @@ resource blobStorageServiceContainerApp 'Microsoft.App/containerapps@2024-02-02-
           identity: acrPullUserManagedIdentity.id
         }
       ]
-      runtime: {
-        java: {
-          enableMetrics: true
-        }
-      }
     }
     template: {
       containers: [
         {
-          image: !empty(blobStorageImageName) ? blobStorageImageName : '${containerRegistry.properties.loginServer}/blob-storage-service:${imageTag}'
+          image: '${containerRegistry.properties.loginServer}/blob-storage-service:${imageTag}'
           name: 'blob-storage-service'
           env: [
             {
@@ -592,7 +562,7 @@ resource storageBlobDelegatorRoleAssignment 'Microsoft.Authorization/roleAssignm
   }
 }
 
-resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-02-02-preview' = {
+resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-03-01' = {
   name: itemCategoryServiceContainerAppName
   location: location
   identity: {
@@ -626,16 +596,11 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-02-0
           identity: acrPullUserManagedIdentity.id
         }
       ]
-      runtime: {
-        java: {
-          enableMetrics: true
-        }
-      }
     }
     template: {
       containers: [
         {
-          image: !empty(itemCategoryImageName) ? itemCategoryImageName: '${containerRegistry.properties.loginServer}/item-category-service:${imageTag}'
+          image: '${containerRegistry.properties.loginServer}/item-category-service:${imageTag}'
           name: 'item-category-service'
           env: [
             {
@@ -685,7 +650,7 @@ resource azureOpenAISecretSecretUserRoleAssignment 'Microsoft.Authorization/role
   }
 }
 
-resource containerApp 'Microsoft.App/containerApps@2024-02-02-preview' = {
+resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
   name: aiShopUiContainerAppName
   location: location
   identity: {
@@ -711,7 +676,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-02-02-preview' = {
     template: {
       containers: [
         {
-          image: !empty(aiShopUiImageName) ? aiShopUiImageName : '${containerRegistry.properties.loginServer}/ai-shop-ui:${imageTag}'
+          image: '${containerRegistry.properties.loginServer}/ai-shop-ui:${imageTag}'
           name: 'ai-shop-ui'
           resources: {
             memory: '2Gi'
