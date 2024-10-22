@@ -205,7 +205,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2024-04-01-preview' = {
       family: 'A'
       name: 'standard'
     }
-    tenantId: 'e23b4cd4-9608-4f8d-9035-712eaabd9d28'
+    tenantId: subscription().tenantId
     networkAcls: {
       bypass: 'None'
       defaultAction: 'Allow'
