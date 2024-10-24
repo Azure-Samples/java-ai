@@ -4,19 +4,33 @@
 	"name": "Java",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/java:1-17-bullseye",
-	
 	"features": {
 		"ghcr.io/devcontainers/features/java:1": {
 			"version": "17",
-			"installMaven": "false",
+			"installMaven": "true",
 			"installGradle": "true"
 		},
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
-		"ghcr.io/devcontainers/features/azure-cli:1": {},
 		"ghcr.io/rchaganti/vsc-devcontainer-features/azurebicep:1": {},
-		"ghcr.io/devcontainers/features/dotnet:2": {}
+		"ghcr.io/devcontainers/features/dotnet:2": {},
+		"ghcr.io/devcontainers/features/git:1": {
+			"version": "latest",
+			"ppa": "false"
+		},
+		"ghcr.io/devcontainers/features/azure-cli:1": {
+			"extensions": [
+				"account",
+				"containerapp",
+				"serviceconnector-passwordless"
+			],
+			"installBicep": true
+		},
+		"ghcr.io/devcontainers/features/terraform:1": {},
+		"ghcr.io/azure/azure-dev/azd:latest": {}
 	},
-	
+	"containerEnv": {
+		"JAVA_HOME": "/usr/lib/jvm/msopenjdk-current"
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -45,7 +59,12 @@
 			]
 		}
 	},
-	
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [8761, 8081, 8082, 8083, 8084]
+	"forwardPorts": [
+		8761,
+		8081,
+		8082,
+		8083,
+		8084
+	]
 }

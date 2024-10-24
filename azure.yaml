@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: java-ai-lab
+
+workflows:
+  up:
+    - azd: provision
+    - azd: package --all
+    - azd: deploy --all
+
+infra:
+  provider: bicep
+  path: infra/bicep
+
+services:
+  api-gateway:
+    resourceName: ca-api-gateway-${environmentName}
+    project: ./src/api-gateway
+    host: containerapp
+    language: java
+    docker:
+      registry: ${AZURE_CONTAINER_REGISTRY_ENDPOINT}
+      image: java-ai/api-gateway
+      tag: ${AZD_PROVISION_TIMESTAMP}
+      remoteBuild: true
+
+  ai-image-processing-service:
+    resourceName: ca-ai-image-process-serv-${environmentName}
+    project: ./src/ai-image-processing-service
+    host: containerapp
+    language: java
+    docker:
+      registry: ${AZURE_CONTAINER_REGISTRY_ENDPOINT}
+      image: java-ai/ai-image-processing-service
+      tag: ${AZD_PROVISION_TIMESTAMP}
+      remoteBuild: true
+
+  blob-storage-service:
+    resourceName: ca-blob-storage-service-${environmentName}
+    project: ./src/blob-storage-service
+    host: containerapp
+    language: java
+    docker:
+      registry: ${AZURE_CONTAINER_REGISTRY_ENDPOINT}
+      image: java-ai/blob-storage-service
+      tag: ${AZD_PROVISION_TIMESTAMP}
+      remoteBuild: true
+
+  ai-shop-ui:
+    resourceName: ca-aishop-ui-${environmentName}
+    project: ./src/ai-shop-ui
+    host: containerapp
+    language: js
+    docker:
+      registry: ${AZURE_CONTAINER_REGISTRY_ENDPOINT}
+      image: java-ai/ai-shop-ui
+      tag: ${AZD_PROVISION_TIMESTAMP}
+      remoteBuild: true
+  
+  item-category-service:
+    resourceName: ca-item-category-${environmentName}
+    project: ./src/item-category-service
+    host: containerapp
+    language: java
+    docker:
+      registry: ${AZURE_CONTAINER_REGISTRY_ENDPOINT}
+      image: java-ai/item-category-service
+      tag: ${AZD_PROVISION_TIMESTAMP}
+      remoteBuild: true
+
+hooks:
+  postprovision:
+    posix:
+      shell: sh
+      run: 'chmod +x ./infra/bicep/hooks/export-env.sh; ./infra/bicep/hooks/export-env.sh'
+  prepackage:
+    posix:
+      shell: sh
+      run: 'chmod +x ./infra/bicep/hooks/build-java.sh; ./infra/bicep/hooks/build-java.sh'
