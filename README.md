@@ -99,7 +99,7 @@ If you want to deploy the AI Shop manually, follow the instructions below:
     az deployment group create \
         --name $CONTAINER_REGISTRY_DEPLOYMENT_NAME \
         --resource-group $RESOURCE_GROUP_NAME \
-        --template-file infra/deploy-container-registry.bicep \
+        --template-file infra/bicep/deploy-container-registry.bicep \
         --parameters workloadName=$WORKLOAD_NAME \
         --parameters environmentName=$ENVIRONMENT_NAME
     ```
@@ -148,7 +148,7 @@ If you want to deploy the AI Shop manually, follow the instructions below:
     az deployment group create \
     --name $DEPLOYMENT_NAME \
     --resource-group $RESOURCE_GROUP_NAME \
-    --template-file infra/deploy.bicep \
+    --template-file infra/bicep/deploy.bicep \
     --parameters imageTag=$TAG \
     --parameters workloadName=$WORKLOAD_NAME \
     --parameters environmentName=$ENVIRONMENT_NAME \

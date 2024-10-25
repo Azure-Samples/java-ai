@@ -11,7 +11,7 @@ CONTAINER_REGISTRY_DEPLOYMENT_NAME=$WORKLOAD_NAME-$ENVIRONMENT_NAME-acr-deployme
 az deployment group create \
   --name $CONTAINER_REGISTRY_DEPLOYMENT_NAME \
   --resource-group $RESOURCE_GROUP_NAME \
-  --template-file infra/deploy-container-registry.bicep \
+  --template-file infra/bicep/deploy-container-registry.bicep \
   --parameters workloadName=$WORKLOAD_NAME \
   --parameters environmentName=$ENVIRONMENT_NAME
 
@@ -55,7 +55,7 @@ DEPLOYMENT_NAME=$WORKLOAD_NAME-$ENVIRONMENT_NAME-deployment
 az deployment group create \
   --name $DEPLOYMENT_NAME \
   --resource-group $RESOURCE_GROUP_NAME \
-  --template-file infra/deploy.bicep \
+  --template-file infra/bicep/deploy.bicep \
   --parameters imageTag=$TAG \
   --parameters workloadName=$WORKLOAD_NAME \
   --parameters environmentName=$ENVIRONMENT_NAME \

@@ -12,8 +12,15 @@ param location string
 @description('Name of the the resource group. Default: rg-{environmentName}')
 param resourceGroupName string = ''
 
+@description('The deployment env name.')
+@allowed([
+  'dev'
+  'test'
+  'prod'
+])
+param deployEnv string = 'dev'
+
 param utcValue string = utcNow()
-var abbrs = loadJsonContent('abbreviations.json')
 var tags = {
   'azd-env-name': environmentName
   'utc-time': utcValue
@@ -21,18 +28,18 @@ var tags = {
 
 @description('Organize resources in a resource group')
 resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
-  name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.resourcesResourceGroups}${environmentName}'
+  name: !empty(resourceGroupName) ? resourceGroupName : 'rg-${environmentName}'
   location: location
   tags: tags
 }
 
 @description('Prepare Azure Container Registry for the images with UMI for AcrPull & AcrPush')
-module containerRegistry '../deploy-container-registry.bicep' = {
+module containerRegistry 'deploy-container-registry.bicep' = {
   name: 'acr-${environmentName}'
   scope: rg
   params: {
     workloadName: environmentName
-    environmentName: 'dev'
+    environmentName: deployEnv
   }
 }
 var banner = 'mcr.microsoft.com/azurespringapps/default-banner:distroless-2024022107-66ea1a62-87936983'
@@ -42,7 +49,7 @@ module deploy 'deploy.bicep' = {
   scope: rg
   params: {
     workloadName: environmentName
-    environmentName: 'dev'
+    environmentName: deployEnv
     containerRegistryName: containerRegistry.outputs.containerRegistryName
     apiGatewayImageName: banner
     imageProcessingImageName: banner
@@ -55,4 +62,4 @@ module deploy 'deploy.bicep' = {
 output resourceGroupName string = rg.name
 output acrLoginServer string = containerRegistry.outputs.acrLoginServer
 output azdProvisionTimestamp string = 'azd-${environmentName}-${utcValue}'
-output environmentName string = 'dev'
+output environmentName string = deployEnv
