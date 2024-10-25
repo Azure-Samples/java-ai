@@ -26,6 +26,8 @@ var tags = {
   'utc-time': utcValue
 }
 
+var banner = 'mcr.microsoft.com/azurespringapps/default-banner:distroless-2024022107-66ea1a62-87936983'
+
 @description('Organize resources in a resource group')
 resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   name: !empty(resourceGroupName) ? resourceGroupName : 'rg-${environmentName}'
@@ -33,24 +35,12 @@ resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   tags: tags
 }
 
-@description('Prepare Azure Container Registry for the images with UMI for AcrPull & AcrPush')
-module containerRegistry 'deploy-container-registry.bicep' = {
-  name: 'acr-${environmentName}'
-  scope: rg
-  params: {
-    workloadName: environmentName
-    environmentName: deployEnv
-  }
-}
-var banner = 'mcr.microsoft.com/azurespringapps/default-banner:distroless-2024022107-66ea1a62-87936983'
-
-module deploy 'deploy.bicep' = {
+module deploy 'deploy-resources.bicep' = {
   name: 'deploy-${environmentName}'
   scope: rg
   params: {
     workloadName: environmentName
     environmentName: deployEnv
-    containerRegistryName: containerRegistry.outputs.containerRegistryName
     apiGatewayImageName: banner
     imageProcessingImageName: banner
     blobStorageImageName: banner
@@ -60,6 +50,11 @@ module deploy 'deploy.bicep' = {
 }
 
 output resourceGroupName string = rg.name
-output acrLoginServer string = containerRegistry.outputs.acrLoginServer
+output acrLoginServer string = deploy.outputs.acrLoginServer
 output azdProvisionTimestamp string = 'azd-${environmentName}-${utcValue}'
-output environmentName string = deployEnv
+output apiGatewayContainerAppName string = deploy.outputs.apiGatewayContainerAppName
+output blobStorageServiceContainerAppName string = deploy.outputs.blobStorageServiceContainerAppName
+output imageProcessingServiceContainerAppName string = deploy.outputs.imageProcessingServiceContainerAppName
+output itemCategoryServiceContainerAppName string = deploy.outputs.itemCategoryServiceContainerAppName
+output aiShopUiContainerApps string = deploy.outputs.aiShopUiContainerApps
+
