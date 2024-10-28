@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
 azd env set AZURE_RESOURCE_GROUP $resourceGroupName
-
 azd env set AZURE_CONTAINER_REGISTRY_ENDPOINT $acrLoginServer
-
 azd env set AZD_PROVISION_TIMESTAMP $azdProvisionTimestamp
 
-azd env set environmentName $environmentName
+azd env set apiGatewayContainerAppName $apiGatewayContainerAppName
+azd env set blobStorageServiceContainerAppName $blobStorageServiceContainerAppName
+azd env set imageProcessingServiceContainerAppName $imageProcessingServiceContainerAppName
+azd env set itemCategoryServiceContainerAppName $itemCategoryServiceContainerAppName
+azd env set aiShopUiContainerApps $aiShopUiContainerApps

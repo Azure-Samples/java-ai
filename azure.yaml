@@ -14,7 +14,7 @@ infra:
 
 services:
   api-gateway:
-    resourceName: ca-api-gateway-${environmentName}
+    resourceName: ${apiGatewayContainerAppName}
     project: ./src/api-gateway
     host: containerapp
     language: java
@@ -25,7 +25,7 @@ services:
       remoteBuild: true
 
   ai-image-processing-service:
-    resourceName: ca-ai-image-process-serv-${environmentName}
+    resourceName: ${imageProcessingServiceContainerAppName}
     project: ./src/ai-image-processing-service
     host: containerapp
     language: java
@@ -36,7 +36,7 @@ services:
       remoteBuild: true
 
   blob-storage-service:
-    resourceName: ca-blob-storage-service-${environmentName}
+    resourceName: ${blobStorageServiceContainerAppName}
     project: ./src/blob-storage-service
     host: containerapp
     language: java
@@ -47,7 +47,7 @@ services:
       remoteBuild: true
 
   ai-shop-ui:
-    resourceName: ca-aishop-ui-${environmentName}
+    resourceName: ${aiShopUiContainerApps}
     project: ./src/ai-shop-ui
     host: containerapp
     language: js
@@ -58,7 +58,7 @@ services:
       remoteBuild: true
   
   item-category-service:
-    resourceName: ca-item-category-${environmentName}
+    resourceName: ${itemCategoryServiceContainerAppName}
     project: ./src/item-category-service
     host: containerapp
     language: java

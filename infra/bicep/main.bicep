@@ -12,38 +12,35 @@ param location string
 @description('Name of the the resource group. Default: rg-{environmentName}')
 param resourceGroupName string = ''
 
+@description('The deployment env name.')
+@allowed([
+  'dev'
+  'test'
+  'prod'
+])
+param deployEnv string = 'dev'
+
 param utcValue string = utcNow()
-var abbrs = loadJsonContent('abbreviations.json')
 var tags = {
   'azd-env-name': environmentName
   'utc-time': utcValue
 }
 
+var banner = 'mcr.microsoft.com/azurespringapps/default-banner:distroless-2024022107-66ea1a62-87936983'
+
 @description('Organize resources in a resource group')
 resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
-  name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.resourcesResourceGroups}${environmentName}'
+  name: !empty(resourceGroupName) ? resourceGroupName : 'rg-${environmentName}'
   location: location
   tags: tags
 }
-
-@description('Prepare Azure Container Registry for the images with UMI for AcrPull & AcrPush')
-module containerRegistry '../deploy-container-registry.bicep' = {
-  name: 'acr-${environmentName}'
-  scope: rg
-  params: {
-    workloadName: environmentName
-    environmentName: 'dev'
-  }
-}
-var banner = 'mcr.microsoft.com/azurespringapps/default-banner:distroless-2024022107-66ea1a62-87936983'
 
 module deploy 'deploy.bicep' = {
   name: 'deploy-${environmentName}'
   scope: rg
   params: {
     workloadName: environmentName
-    environmentName: 'dev'
-    containerRegistryName: containerRegistry.outputs.containerRegistryName
+    environmentName: deployEnv
     apiGatewayImageName: banner
     imageProcessingImageName: banner
     blobStorageImageName: banner
@@ -53,6 +50,11 @@ module deploy 'deploy.bicep' = {
 }
 
 output resourceGroupName string = rg.name
-output acrLoginServer string = containerRegistry.outputs.acrLoginServer
+output acrLoginServer string = deploy.outputs.acrLoginServer
 output azdProvisionTimestamp string = 'azd-${environmentName}-${utcValue}'
-output environmentName string = 'dev'
+output apiGatewayContainerAppName string = deploy.outputs.apiGatewayContainerAppName
+output blobStorageServiceContainerAppName string = deploy.outputs.blobStorageServiceContainerAppName
+output imageProcessingServiceContainerAppName string = deploy.outputs.imageProcessingServiceContainerAppName
+output itemCategoryServiceContainerAppName string = deploy.outputs.itemCategoryServiceContainerAppName
+output aiShopUiContainerApps string = deploy.outputs.aiShopUiContainerApps
+

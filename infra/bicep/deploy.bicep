@@ -42,7 +42,7 @@ param azureOpenAISubDomainName string = '${replace(workloadName, '-', '')}${take
 param logAnalyticsWorkspaceName string = 'log-${workloadName}-${environmentName}'
 
 @description('The name of the container registry.')
-param containerRegistryName string
+param containerRegistryName string = 'cr${replace(workloadName, '-', '')}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
 
 @description('The name of the user-managed identity for ACR pull. Default to "umi-acr-pull-<containerRegistryName>".')
 param acrPullUserManagedIdentityName string = 'umi-acr-pull-${containerRegistryName}'
@@ -191,8 +191,47 @@ resource springAdmin 'Microsoft.App/managedEnvironments/javaComponents@2024-02-0
 
 /* --------------------------- Container Registry --------------------------- */
 
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-11-01-preview' existing = {
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-11-01-preview' = {
   name: containerRegistryName
+  location: location
+  sku: {
+    name: 'Standard'
+  }
+  properties: {
+    adminUserEnabled: true
+    policies: {
+      quarantinePolicy: {
+        status: 'disabled'
+      }
+      trustPolicy: {
+        type: 'Notary'
+        status: 'disabled'
+      }
+      retentionPolicy: {
+        days: 7
+        status: 'disabled'
+      }
+      exportPolicy: {
+        status: 'enabled'
+      }
+      azureADAuthenticationAsArmPolicy: {
+        status: 'enabled'
+      }
+      softDeletePolicy: {
+        retentionDays: 7
+        status: 'disabled'
+      }
+    }
+    encryption: {
+      status: 'disabled'
+    }
+    dataEndpointEnabled: false
+    publicNetworkAccess: 'Enabled'
+    networkRuleBypassOptions: 'AzureServices'
+    zoneRedundancy: 'Disabled'
+    anonymousPullEnabled: false
+    metadataSearch: 'Disabled'
+  }
 }
 
 resource acrPullUserManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
@@ -685,7 +724,7 @@ resource azureOpenAISecretSecretUserRoleAssignment 'Microsoft.Authorization/role
   }
 }
 
-resource containerApp 'Microsoft.App/containerApps@2024-02-02-preview' = {
+resource aiShopUiContainerApps 'Microsoft.App/containerApps@2024-02-02-preview' = {
   name: aiShopUiContainerAppName
   location: location
   identity: {
@@ -744,3 +783,10 @@ output blobStorageServiceContainerAppName string = blobStorageServiceContainerAp
 
 @description('The name of the item category service container app.')
 output itemCategoryServiceContainerAppName string = itemCategoryServiceContainerApps.name
+
+@description('The name of the ai shop UI container app.')
+output aiShopUiContainerApps string = aiShopUiContainerApps.name
+
+@description('The loginServer of the container registry.')
+output acrLoginServer string = containerRegistry.properties.loginServer
+
