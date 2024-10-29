@@ -48,7 +48,7 @@ module deploy 'deploy.bicep' = {
     aiShopUiImageName: banner
     tags: {
       'azd-env-name': environmentName
-      'azure-sample-java-ai': 'true'
+      'azure-samples-java-ai': 'true'
     }
   }
 }
