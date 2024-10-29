@@ -46,6 +46,10 @@ module deploy 'deploy.bicep' = {
     blobStorageImageName: banner
     itemCategoryImageName: banner
     aiShopUiImageName: banner
+    tags: {
+      'azd-env-name': environmentName
+      'azure-sample-java-ai': 'true'
+    }
   }
 }
 
