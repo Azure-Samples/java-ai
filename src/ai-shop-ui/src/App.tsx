@@ -27,7 +27,7 @@ function App() {
       <div className="w-full container mx-auto my-16">
           <div className="w-full flex items-center justify-between">
             <a className="flex items-center text-indigo-400 no-underline hover:no-underline font-bold text-2xl lg:text-5xl" href="#">
-              The AI Shop <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">&nbsp;@ Devoxx</span>
+               AI Shop <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">&nbsp;</span>
             </a>
 
             <div className="flex w-1/2 justify-end content-center">
