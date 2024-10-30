@@ -51,6 +51,8 @@ param acrPullUserManagedIdentityName string = 'umi-acr-pull-${containerRegistryN
 param containerAppsEnvironmentName string = 'cae-${workloadName}-${environmentName}'
 
 /* ----------------------------- Container Apps ----------------------------- */
+@description('The tags for container apps. Default to empty.')
+param tags object = {}
 
 @description('The name of the API gateway container app. Default to "ca-api-gateway-<environmentName>".')
 param apiGatewayContainerAppName string = 'ca-api-gateway-${environmentName}'
@@ -379,6 +381,7 @@ resource storageAccountBlobContainer 'Microsoft.Storage/storageAccounts/blobServ
 resource aiImageProcessingServiceContainerApp 'Microsoft.App/containerApps@2024-02-02-preview' = {
   name: imageProcessingServiceContainerAppName
   location: location
+  tags: tags
   identity: {
     type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
@@ -458,6 +461,7 @@ resource cognitiveServicesOpenAIUserRoleAssignment 'Microsoft.Authorization/role
 resource apiGatewayContainerApp 'Microsoft.App/containerapps@2024-02-02-preview' = {
   name: apiGatewayContainerAppName
   location: location
+  tags: tags
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
@@ -532,6 +536,7 @@ resource apiGatewayContainerApp 'Microsoft.App/containerapps@2024-02-02-preview'
 resource blobStorageServiceContainerApp 'Microsoft.App/containerapps@2024-02-02-preview' = {
   name: blobStorageServiceContainerAppName
   location: location
+  tags: tags
   identity: {
     type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
@@ -634,6 +639,7 @@ resource storageBlobDelegatorRoleAssignment 'Microsoft.Authorization/roleAssignm
 resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-02-02-preview' = {
   name: itemCategoryServiceContainerAppName
   location: location
+  tags: tags
   identity: {
     type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
@@ -727,6 +733,7 @@ resource azureOpenAISecretSecretUserRoleAssignment 'Microsoft.Authorization/role
 resource aiShopUiContainerApps 'Microsoft.App/containerApps@2024-02-02-preview' = {
   name: aiShopUiContainerAppName
   location: location
+  tags: tags
   identity: {
     type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
