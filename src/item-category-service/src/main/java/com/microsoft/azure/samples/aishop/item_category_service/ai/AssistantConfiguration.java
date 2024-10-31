@@ -15,7 +15,7 @@ public class AssistantConfiguration {
     @Value("${langchain4j.azure-open-ai.chat-model.endpoint}")
     private String endpoint;
 
-    @Value("${langchain4j.azure-open-ai.chat-model.deployment-nam}")
+    @Value("${langchain4j.azure-open-ai.chat-model.deployment-name}")
     private String deploymentName;
 
     /**
