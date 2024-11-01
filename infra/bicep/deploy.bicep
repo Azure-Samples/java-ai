@@ -23,9 +23,6 @@ param environmentName string = 'dev'
 
 /* ----------------------------- Infrastructure ----------------------------- */
 
-@description('The name of the key vault. Default to "kv<workloadName><environmentName><uniqueString(resourceGroup().id)>".')
-param keyVaultName string = 'kv${replace(workloadName, '-', '')}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
-
 @description('The name of the storage account. Default to "st<workloadName><environmentName><uniqueString(resourceGroup().id)>".')
 param storageAccountName string = 'st${replace(workloadName, '-', '')}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
 
@@ -251,32 +248,6 @@ resource containerRegistryAcrPullRoleAssignment 'Microsoft.Authorization/roleAss
   }
 }
 
-/* -------------------------------- Key Vault ------------------------------- */
-
-resource keyVault 'Microsoft.KeyVault/vaults@2024-04-01-preview' = {
-  name: keyVaultName
-  location: location
-  properties: {
-    sku: {
-      family: 'A'
-      name: 'standard'
-    }
-    tenantId: subscription().tenantId
-    networkAcls: {
-      bypass: 'None'
-      defaultAction: 'Allow'
-      ipRules: []
-      virtualNetworkRules: []
-    }
-    accessPolicies: []
-    enabledForDeployment: false
-    enabledForDiskEncryption: false
-    enabledForTemplateDeployment: false
-    enableSoftDelete: true
-    softDeleteRetentionInDays: 90
-    enableRbacAuthorization: true
-  }
-}
 
 /* ------------------------------- Monitoring ------------------------------- */
 
@@ -332,17 +303,6 @@ resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-
     versionUpgradeOption: 'OnceCurrentVersionExpired'
     currentCapacity: 450
     raiPolicyName: 'Microsoft.DefaultV2'
-  }
-}
-
-resource azureOpenAISecret 'Microsoft.KeyVault/vaults/secrets@2024-04-01-preview' = {
-  parent: keyVault
-  name: 'azure-openai-key'
-  properties: {
-    attributes: {
-      enabled: true
-    }
-    value: azureOpenAI.listKeys().key1
   }
 }
 
@@ -448,8 +408,8 @@ resource aiImageProcessingServiceContainerApp 'Microsoft.App/containerApps@2024-
   }
 }
 
-resource cognitiveServicesOpenAIUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(azureOpenAI.id, gpt4oDeployment.name, cognitiveServicesOpenAIUserRole)
+resource AssignRoleCognitiveServicesOpenAIUserToAiImageProcessing 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(azureOpenAI.id, gpt4oDeployment.name, workloadName, aiImageProcessingServiceContainerApp.name, cognitiveServicesOpenAIUserRole)
   scope: azureOpenAI
   properties: {
     principalId: aiImageProcessingServiceContainerApp.identity.principalId
@@ -650,13 +610,6 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-02-0
     managedEnvironmentId: containerAppsEnvironment.id
     workloadProfileName: 'Consumption'
     configuration: {
-      secrets: [
-        {
-          name: 'azure-openai-key'
-          keyVaultUrl: azureOpenAISecret.properties.secretUri
-          identity: 'system'
-        }
-      ]
       activeRevisionsMode: 'Single'
       ingress: {
         external: false
@@ -683,10 +636,6 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-02-0
           image: !empty(itemCategoryImageName) ? itemCategoryImageName: '${containerRegistry.properties.loginServer}/item-category-service:${imageTag}'
           name: 'item-category-service'
           env: [
-            {
-              name: 'AZURE_OPENAI_API_KEY'
-              secretRef: 'azure-openai-key'
-            }
             {
               name: 'AZURE_OPENAI_ENDPOINT'
               value: azureOpenAI.properties.endpoint
@@ -720,15 +669,16 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-02-0
   }
 }
 
-resource azureOpenAISecretSecretUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(azureOpenAISecret.id, keyVault.id, keyVaultSecretUserRole, itemCategoryServiceContainerApps.id)
-  scope: azureOpenAISecret
+resource AssignRoleCognitiveServicesOpenAIUserToItemCategory 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(azureOpenAI.id, gpt4oDeployment.name, workloadName, itemCategoryServiceContainerApps.name, cognitiveServicesOpenAIUserRole)
+  scope: azureOpenAI
   properties: {
     principalId: itemCategoryServiceContainerApps.identity.principalId
     principalType: 'ServicePrincipal'
-    roleDefinitionId: keyVaultSecretUserRole
+    roleDefinitionId: cognitiveServicesOpenAIUserRole
   }
 }
+
 
 resource aiShopUiContainerApps 'Microsoft.App/containerApps@2024-02-02-preview' = {
   name: aiShopUiContainerAppName
