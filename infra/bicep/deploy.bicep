@@ -706,8 +706,8 @@ resource aiShopUiContainerApps 'Microsoft.App/containerApps@2024-02-02-preview' 
     }
     template: {
       scale: {
-        maxReplicas: 1
-        minReplicas: 10
+        maxReplicas: 10
+        minReplicas: 1
       }
       containers: [
         {
