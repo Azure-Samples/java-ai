@@ -705,6 +705,10 @@ resource aiShopUiContainerApps 'Microsoft.App/containerApps@2024-02-02-preview' 
       ]
     }
     template: {
+      scale: {
+        maxReplicas: 10
+        minReplicas: 1
+      }
       containers: [
         {
           image: !empty(aiShopUiImageName) ? aiShopUiImageName : '${containerRegistry.properties.loginServer}/ai-shop-ui:${imageTag}'
