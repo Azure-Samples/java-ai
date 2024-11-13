@@ -44,7 +44,6 @@ The following resources will be created as represented in the diagram below:
     - [Eureka Server for Spring Component](https://learn.microsoft.com/en-us/azure/container-apps/java-eureka-server-usage)
     - [Admin for Spring Component](https://learn.microsoft.com/en-us/azure/container-apps/java-admin-for-spring-usage)
 - Azure Blob Storage Account
-- Azure Key Vault for the `item-category-service` Azure OpenAI API Key secret
 - User-assigned Managed Identity to pull the images from the Azure Container Registry
 - Azure OpenAI
 - [Azure Container Apps with Java Runtime](https://learn.microsoft.com/azure/container-apps/java-metrics)

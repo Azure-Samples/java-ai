@@ -23,9 +23,6 @@ param environmentName string = 'dev'
 
 /* ----------------------------- Infrastructure ----------------------------- */
 
-@description('The name of the key vault. Default to "kv<workloadName><environmentName><uniqueString(resourceGroup().id)>".')
-param keyVaultName string = 'kv${replace(workloadName, '-', '')}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
-
 @description('The name of the storage account. Default to "st<workloadName><environmentName><uniqueString(resourceGroup().id)>".')
 param storageAccountName string = 'st${replace(workloadName, '-', '')}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
 
@@ -51,6 +48,8 @@ param acrPullUserManagedIdentityName string = 'umi-acr-pull-${containerRegistryN
 param containerAppsEnvironmentName string = 'cae-${workloadName}-${environmentName}'
 
 /* ----------------------------- Container Apps ----------------------------- */
+@description('The tags for container apps. Default to empty.')
+param tags object = {}
 
 @description('The name of the API gateway container app. Default to "ca-api-gateway-<environmentName>".')
 param apiGatewayContainerAppName string = 'ca-api-gateway-${environmentName}'
@@ -249,32 +248,6 @@ resource containerRegistryAcrPullRoleAssignment 'Microsoft.Authorization/roleAss
   }
 }
 
-/* -------------------------------- Key Vault ------------------------------- */
-
-resource keyVault 'Microsoft.KeyVault/vaults@2024-04-01-preview' = {
-  name: keyVaultName
-  location: location
-  properties: {
-    sku: {
-      family: 'A'
-      name: 'standard'
-    }
-    tenantId: subscription().tenantId
-    networkAcls: {
-      bypass: 'None'
-      defaultAction: 'Allow'
-      ipRules: []
-      virtualNetworkRules: []
-    }
-    accessPolicies: []
-    enabledForDeployment: false
-    enabledForDiskEncryption: false
-    enabledForTemplateDeployment: false
-    enableSoftDelete: true
-    softDeleteRetentionInDays: 90
-    enableRbacAuthorization: true
-  }
-}
 
 /* ------------------------------- Monitoring ------------------------------- */
 
@@ -333,17 +306,6 @@ resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-
   }
 }
 
-resource azureOpenAISecret 'Microsoft.KeyVault/vaults/secrets@2024-04-01-preview' = {
-  parent: keyVault
-  name: 'azure-openai-key'
-  properties: {
-    attributes: {
-      enabled: true
-    }
-    value: azureOpenAI.listKeys().key1
-  }
-}
-
 /* --------------------------------- Storage -------------------------------- */
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
@@ -379,6 +341,7 @@ resource storageAccountBlobContainer 'Microsoft.Storage/storageAccounts/blobServ
 resource aiImageProcessingServiceContainerApp 'Microsoft.App/containerApps@2024-02-02-preview' = {
   name: imageProcessingServiceContainerAppName
   location: location
+  tags: tags
   identity: {
     type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
@@ -445,8 +408,8 @@ resource aiImageProcessingServiceContainerApp 'Microsoft.App/containerApps@2024-
   }
 }
 
-resource cognitiveServicesOpenAIUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(azureOpenAI.id, gpt4oDeployment.name, cognitiveServicesOpenAIUserRole)
+resource AssignRoleCognitiveServicesOpenAIUserToAiImageProcessing 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(azureOpenAI.id, gpt4oDeployment.name, workloadName, aiImageProcessingServiceContainerApp.name, cognitiveServicesOpenAIUserRole)
   scope: azureOpenAI
   properties: {
     principalId: aiImageProcessingServiceContainerApp.identity.principalId
@@ -458,6 +421,7 @@ resource cognitiveServicesOpenAIUserRoleAssignment 'Microsoft.Authorization/role
 resource apiGatewayContainerApp 'Microsoft.App/containerapps@2024-02-02-preview' = {
   name: apiGatewayContainerAppName
   location: location
+  tags: tags
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
@@ -532,6 +496,7 @@ resource apiGatewayContainerApp 'Microsoft.App/containerapps@2024-02-02-preview'
 resource blobStorageServiceContainerApp 'Microsoft.App/containerapps@2024-02-02-preview' = {
   name: blobStorageServiceContainerAppName
   location: location
+  tags: tags
   identity: {
     type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
@@ -634,6 +599,7 @@ resource storageBlobDelegatorRoleAssignment 'Microsoft.Authorization/roleAssignm
 resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-02-02-preview' = {
   name: itemCategoryServiceContainerAppName
   location: location
+  tags: tags
   identity: {
     type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
@@ -644,13 +610,6 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-02-0
     managedEnvironmentId: containerAppsEnvironment.id
     workloadProfileName: 'Consumption'
     configuration: {
-      secrets: [
-        {
-          name: 'azure-openai-key'
-          keyVaultUrl: azureOpenAISecret.properties.secretUri
-          identity: 'system'
-        }
-      ]
       activeRevisionsMode: 'Single'
       ingress: {
         external: false
@@ -677,10 +636,6 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-02-0
           image: !empty(itemCategoryImageName) ? itemCategoryImageName: '${containerRegistry.properties.loginServer}/item-category-service:${imageTag}'
           name: 'item-category-service'
           env: [
-            {
-              name: 'AZURE_OPENAI_API_KEY'
-              secretRef: 'azure-openai-key'
-            }
             {
               name: 'AZURE_OPENAI_ENDPOINT'
               value: azureOpenAI.properties.endpoint
@@ -714,19 +669,21 @@ resource itemCategoryServiceContainerApps 'Microsoft.App/containerApps@2024-02-0
   }
 }
 
-resource azureOpenAISecretSecretUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(azureOpenAISecret.id, keyVault.id, keyVaultSecretUserRole, itemCategoryServiceContainerApps.id)
-  scope: azureOpenAISecret
+resource AssignRoleCognitiveServicesOpenAIUserToItemCategory 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(azureOpenAI.id, gpt4oDeployment.name, workloadName, itemCategoryServiceContainerApps.name, cognitiveServicesOpenAIUserRole)
+  scope: azureOpenAI
   properties: {
     principalId: itemCategoryServiceContainerApps.identity.principalId
     principalType: 'ServicePrincipal'
-    roleDefinitionId: keyVaultSecretUserRole
+    roleDefinitionId: cognitiveServicesOpenAIUserRole
   }
 }
+
 
 resource aiShopUiContainerApps 'Microsoft.App/containerApps@2024-02-02-preview' = {
   name: aiShopUiContainerAppName
   location: location
+  tags: tags
   identity: {
     type: 'SystemAssigned, UserAssigned'
     userAssignedIdentities: {
@@ -748,6 +705,10 @@ resource aiShopUiContainerApps 'Microsoft.App/containerApps@2024-02-02-preview' 
       ]
     }
     template: {
+      scale: {
+        maxReplicas: 10
+        minReplicas: 1
+      }
       containers: [
         {
           image: !empty(aiShopUiImageName) ? aiShopUiImageName : '${containerRegistry.properties.loginServer}/ai-shop-ui:${imageTag}'
