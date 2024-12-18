@@ -11,12 +11,16 @@ To run the AI Shop UI locally, you need first to build the common module and the
 3. Ensure that the AI Image Processing Service is running. If not, [start the AI Image Processing Service](../ai-image-processing-service/README.md)
 4. Ensure that the Item Category Service is running. If not, [start the Item Category Service](../item-category-service/README.md)
 5. Ensure that the API Gateway is running. If not, [start the API Gateway](../api-gateway/README.md)
-6. Start the AI Shop UI
+6. Start the AI Shop UI in folder `src/ai-shop-ui/`
 
     ```bash
     npm install
     npm start
     ```
+
+7. Call the WebApp in the browser: http://localhost:3000/
+
+
 
 ## Build the image and push it to Azure Container Registry
 
