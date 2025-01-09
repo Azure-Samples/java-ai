@@ -10,7 +10,7 @@ To run the API Gateway locally, you need first to build the common module and th
 2. Ensure that the Blob Storage Service is running. If not, [start the Blob Storage Service](../blob-storage-service/README.md)
 3. Ensure that the AI Image Processing Service is running. If not, [start the AI Image Processing Service](../ai-image-processing-service/README.md)
 4. Ensure that the Item Category Service is running. If not, [start the Item Category Service](../item-category-service/README.md)
-5. Run the API Gateway
+5. Run the API Gateway in folder `src/api-gateway/`
 
     ```bash
     ./mvnw spring-boot:run
