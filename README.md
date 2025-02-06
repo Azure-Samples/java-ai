@@ -64,7 +64,7 @@ After up to 15 minutes all resources will be deployed. Please call the printed e
 
 ![alt text](startpage.png)
 
-Please upload a product picture to generate name, brand, model, price, description, categories via OpenAI.
+Just upload a product picture to generate name, brand, model, price, description, categories via OpenAI.
 
 ![alt text](productUpload.png)
 
