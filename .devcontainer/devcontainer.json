@@ -11,8 +11,6 @@
 			"installGradle": "true"
 		},
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
-		"ghcr.io/rchaganti/vsc-devcontainer-features/azurebicep:1": {},
-		"ghcr.io/devcontainers/features/dotnet:2": {},
 		"ghcr.io/devcontainers/features/git:1": {
 			"version": "latest",
 			"ppa": "false"
@@ -50,9 +48,7 @@
 				"ms-azuretools.vscode-azurecontainerapps",
 				"ms-azuretools.vscode-azureresourcegroups",
 				"ms-azuretools.vscode-azurestorage",
-				"ms-azuretools.vscode-dapr",
 				"ms-azuretools.vscode-docker",
-				"ms-vscode.azure-account",
 				"msazurermtools.azurerm-vscode-tools",
 				"redhat.vscode-xml",
 				"redhat.vscode-yaml"
