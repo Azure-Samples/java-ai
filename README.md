@@ -53,7 +53,20 @@ The following resources will be created as represented in the diagram below:
 
 ### Quick start
 
-To deploy the AI Shop to Azure, you need only to run the `azd up` command. The [Azure Developer CLI (azd)](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/) will create all the necessary resources in Azure and deploy the services to Azure Container Apps. 
+To deploy the AI Shop to Azure, you need only to run the `azd up` command. The [Azure Developer CLI (azd)](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/) will create all the necessary resources in Azure and deploy the services to Azure Container Apps. Please login first, then choose a name for the resource group, a subscription and region.
+
+```bash
+azd auth login
+azd up
+```
+
+After up to 15 minutes all resources will be deployed. Please call the printed endpoint of the ai-shop-ui of the terminal in a browser. You should see the start page of **The AI Shop**:
+
+![alt text](startpage.png)
+
+Just upload a product picture to generate name, brand, model, price, description, categories via OpenAI.
+
+![alt text](productUpload.png)
 
 ## Trademarks
 

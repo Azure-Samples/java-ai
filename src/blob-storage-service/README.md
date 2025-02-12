@@ -15,7 +15,7 @@ To run the Blob Storage Service locally, you need first to build the common modu
     export STORAGE_ACCOUNT_CONTAINER_NAME=<your-storage-account-container-name>
     ```
 
-3. Start the Blob Storage Service
+3. Start the Blob Storage Service in folder `src/blob-storage-service/`
 
     ```bash
     ./mvnw spring-boot:run

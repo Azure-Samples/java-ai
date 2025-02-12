@@ -8,14 +8,14 @@ To run the Item Category Service locally, you need first to build the common mod
 
 1. [Build the common module](../java-ai-common/common/README.md)
 2. Ensure that the Eurka Server is running. If not, [start the Eureka Server](../eureka-server/README.md)
-3. Set the following environment variables:
+3. Set the following environment variable. you get the values fom Azure Open AI Service / deployments: https://ai.azure.com/resource/deployments/
 
     ```bash
     export AZURE_OPENAI_API_KEY=<your-azure-openai-api-key>
     export AZURE_OPENAI_ENDPOINT=<your-azure-openai-endpoint>
     export AZURE_OPENAI_DEPLOYMENT_NAME=<your-azure-openai-deployment-name>
     ```
-4. Start the Item Category Service
+4. Start the Item Category Service in folder `src/item-category-service`
 
     ```bash
     ./mvnw spring-boot:run
