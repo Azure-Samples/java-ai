@@ -23,8 +23,8 @@ param environmentName string = 'dev'
 
 /* ----------------------------- Infrastructure ----------------------------- */
 
-@description('The name of the storage account. Default to "st<workloadName><environmentName><uniqueString(resourceGroup().id)>".')
-param storageAccountName string = 'st${replace(workloadName, '-', '')}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
+@description('The name of the storage account. Default to "st<take(workloadName, 6)><environmentName><uniqueString(resourceGroup().id)>".')
+param storageAccountName string = 'st${take(replace(workloadName, '-', ''), 6)}${environmentName}${take(uniqueString(resourceGroup().id), 5)}'
 
 @description('The name of the storage account blob container. Default to "aishopinbox".')
 param storageAccountBlobContainerName string = 'aishopinbox'
@@ -284,6 +284,7 @@ resource azureOpenAI 'Microsoft.CognitiveServices/accounts@2024-04-01-preview' =
   properties: {
     customSubDomainName: azureOpenAISubDomainName
     publicNetworkAccess: 'Enabled'
+    disableLocalAuth: true
   }
 }
 
