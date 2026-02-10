@@ -163,7 +163,7 @@ After up to 15 minutes all resources will be deployed. Please call the printed e
 
 Just upload a product picture to generate name, brand, model, price, description, categories via OpenAI.
 
-![alt text](media/productUpload.png)
+![Uploading a product image for AI metadata generation](media/productUpload.png)
 
 ## Trademarks
 
