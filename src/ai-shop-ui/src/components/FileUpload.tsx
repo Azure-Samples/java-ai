@@ -28,17 +28,14 @@ const FileUpload = (props: any) => {
 
   const handleUpload = async () => {
 
-    //const UPLOAD_URL = "http://localhost:8080/upload";
     // Use the extended Window interface
     if (!window._env_) {
       window._env_ = {
-        REACT_APP_API_URL: "http://localhost:8080/upload",
+        REACT_APP_API_URL: "http://localhost:8081/item-info",
       };
     }
 
-
     const UPLOAD_URL = window._env_.REACT_APP_API_URL;
-    //let UPLOAD_URL = "https://ca-api-gateway-dev.redpebble-17f80563.swedencentral.azurecontainerapps.io/item-info"
 
     setLoading(true);
     const data = new FormData();
