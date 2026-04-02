@@ -10,6 +10,9 @@
 			"installMaven": "true",
 			"installGradle": "true"
 		},
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "lts"
+		},
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
 		"ghcr.io/rchaganti/vsc-devcontainer-features/azurebicep:1": {},
 		"ghcr.io/devcontainers/features/dotnet:2": {},
@@ -55,12 +58,17 @@
 				"ms-vscode.azure-account",
 				"msazurermtools.azurerm-vscode-tools",
 				"redhat.vscode-xml",
-				"redhat.vscode-yaml"
+				"redhat.vscode-yaml",
+				"dbaeumer.vscode-eslint",
+				"esbenp.prettier-vscode",
+				"bradlc.vscode-tailwindcss",
+				"ms-vscode.vscode-typescript-next"
 			]
 		}
 	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
+		3000,
 		8761,
 		8081,
 		8082,
