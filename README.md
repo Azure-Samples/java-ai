@@ -159,11 +159,11 @@ azd up
 
 After up to 15 minutes all resources will be deployed. Please call the printed endpoint of the ai-shop-ui of the terminal in a browser. You should see the start page of **The AI Shop**:
 
-![alt text](startpage.png)
+![Start page of The AI Shop](media/startpage.png)
 
 Just upload a product picture to generate name, brand, model, price, description, categories via OpenAI.
 
-![alt text](productUpload.png)
+![Uploading a product image for AI metadata generation](media/productUpload.png)
 
 ## Trademarks
 
