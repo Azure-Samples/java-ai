@@ -3,7 +3,9 @@
 {
 	"name": "Java",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/java:1-17-bullseye",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
 	"features": {
 		"ghcr.io/devcontainers/features/java:1": {
 			"version": "17",
@@ -32,7 +34,7 @@
 		"ghcr.io/azure/azure-dev/azd:latest": {}
 	},
 	"containerEnv": {
-		"JAVA_HOME": "/usr/lib/jvm/msopenjdk-current"
+		"JAVA_HOME": "/usr/local/sdkman/candidates/java/current"
 	},
 	"customizations": {
 		"vscode": {

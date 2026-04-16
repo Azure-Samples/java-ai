@@ -31,7 +31,7 @@ const FileUpload = (props: any) => {
     // Use the extended Window interface
     if (!window._env_) {
       window._env_ = {
-        REACT_APP_API_URL: "http://localhost:8081/item-info",
+        REACT_APP_API_URL: "/item-info",
       };
     }
 

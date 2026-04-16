@@ -24,10 +24,13 @@ import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.microsoft.azure.samples.aishop.blob_storage_service.exception.WriteBlobException;
 
+import org.springframework.context.annotation.Profile;
+
 /**
  * REST controller for managing blob storage operations.
  */
 @RestController
+@Profile("!local")
 public class BlobStorageRestController {
 
 
