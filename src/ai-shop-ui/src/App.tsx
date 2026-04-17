@@ -226,7 +226,7 @@ function App() {
               
             </div> }
 
-            { data && <div className="border-b border-gray-900/10 pb-12">
+            { data && data.category && <div className="border-b border-gray-900/10 pb-12">
               <h2 className="text-base font-semibold leading-7 text-gray-900">Item categories</h2>
               <p className="mt-1 text-sm leading-6 text-gray-600">Select the categories the item belongs too</p>
 
