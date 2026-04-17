@@ -39,3 +39,9 @@ build/
 
 **/*.jpg
 node_modules
+
+### OS ###
+.DS_Store
+
+### Build artifacts ###
+META-INF/
