@@ -15,10 +15,10 @@ To run the Item Category Service locally, you need first to build the common mod
     export AZURE_OPENAI_ENDPOINT=<your-azure-openai-endpoint>
     export AZURE_OPENAI_DEPLOYMENT_NAME=<your-azure-openai-deployment-name>
     ```
-4. Start the Item Category Service in folder `src/item-category-service`
+4. Start the Item Category Service in folder `src/item-category-service` using the `local` profile. The `local` profile uses API key authentication instead of Managed Identity:
 
     ```bash
-    ./mvnw spring-boot:run
+    ./mvnw spring-boot:run -Dspring-boot.run.profiles=local -DskipTests
     ```
 
 ## Build the image and push it to Azure Container Registry

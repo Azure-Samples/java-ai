@@ -1,5 +1,6 @@
 package com.microsoft.azure.samples.aishop.ai_image_processing_service.rest;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -8,10 +9,13 @@ import org.springframework.ai.azure.openai.AzureOpenAiChatOptions;
 import org.springframework.ai.azure.openai.AzureOpenAiResponseFormat;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.model.Media;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
 import com.microsoft.azure.samples.aishop.ai_image_processing_service.ai.PromptConstant;
@@ -24,6 +28,7 @@ import jakarta.validation.constraints.Size;
 public class AiImageProcessingRestController {
     
     private final AzureOpenAiChatModel chatModel;
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public AiImageProcessingRestController(final AzureOpenAiChatModel chatModel) {
         this.chatModel = chatModel;
@@ -40,7 +45,7 @@ public class AiImageProcessingRestController {
     @PostMapping("/item-info")
     public ItemInfoDto getItemInfo(
         @RequestParam("imageBlobSasTokenUrl") @NotNull @Size(min = 1) final String imageBlobSasTokenUrl,
-        @RequestParam("mimeType") @NotNull @Size(min = 1) final String mimeType) throws MalformedURLException {
+        @RequestParam("mimeType") @NotNull @Size(min = 1) final String mimeType) throws IOException {
         final AzureOpenAiChatOptions chatOptions = AzureOpenAiChatOptions.builder()
             .withDeploymentName("gpt-4o")
             .withTemperature(0f)
@@ -61,15 +66,17 @@ public class AiImageProcessingRestController {
 
     /**
      * Creates a new Media object based on the provided image blob URL and MIME type.
-     *
-     * @param imageBlobUrl The URL of the image blob.
-     * @param mimeTypeAsString The MIME type of the image as a string.
-     * @return A new Media object representing the image.
-     * @throws MalformedURLException If the image blob URL is invalid.
+     * For localhost URLs (local development), downloads the image and sends it as
+     * inline data. For remote URLs (Azure Blob SAS), passes the URL directly.
      */
-    private Media generateMedia(final String imageBlobUrl, final String mimeTypeAsString) throws MalformedURLException {
-        final URL url = new URL(imageBlobUrl);
+    private Media generateMedia(final String imageBlobUrl, final String mimeTypeAsString) throws IOException {
         final MimeType mimeType = MimeType.valueOf(mimeTypeAsString);
+        if (imageBlobUrl.contains("localhost") || imageBlobUrl.contains("127.0.0.1")) {
+            final ResponseEntity<byte[]> response = restTemplate.getForEntity(imageBlobUrl, byte[].class);
+            final byte[] imageBytes = response.getBody();
+            return new Media(mimeType, new ByteArrayResource(imageBytes));
+        }
+        final URL url = new URL(imageBlobUrl);
         return new Media(mimeType, url);
     }
 

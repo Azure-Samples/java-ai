@@ -7,19 +7,27 @@ This is a simple implementation of a Blob Storage Service. It is a RESTful servi
 To run the Blob Storage Service locally, you need first to build the common module and then start the service. Follow the instructions below in the order they are presented:
 
 1. Ensure that the Eurka Server is running. If not, [start the Eureka Server](../eureka-server/README.md)
-2. Set the following environment variables:
+2. Start the Blob Storage Service in folder `src/blob-storage-service/` using the `local` profile. The `local` profile uses the local file system instead of Azure Blob Storage, so no Azure storage environment variables are needed:
 
     ```bash
-    export STORAGE_ACCOUNT_NAME=<your-storage-account-name>
-    export STORAGE_ACCOUNT_ENDPOINT=<your-storage-account-endpoint>
-    export STORAGE_ACCOUNT_CONTAINER_NAME=<your-storage-account-container-name>
+    ./mvnw spring-boot:run -Dspring-boot.run.profiles=local -DskipTests
     ```
 
-3. Start the Blob Storage Service in folder `src/blob-storage-service/`
+**Alternative: connect to real Azure Blob Storage**
 
-    ```bash
-    ./mvnw spring-boot:run
-    ```
+If you want to connect to an actual Azure Storage account instead of using the local file system, skip the `local` profile and set the following environment variables:
+
+```bash
+export STORAGE_ACCOUNT_NAME=<your-storage-account-name>
+export STORAGE_ACCOUNT_ENDPOINT=<your-storage-account-endpoint>
+export STORAGE_ACCOUNT_CONTAINER_NAME=<your-storage-account-container-name>
+```
+
+Then start the service without the `local` profile:
+
+```bash
+./mvnw spring-boot:run -DskipTests
+```
 
 ## Build the image and push it to Azure Container Registry
 

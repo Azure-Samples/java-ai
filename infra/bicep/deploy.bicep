@@ -299,7 +299,7 @@ resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-
     model: {
       format: 'OpenAI'
       name: 'gpt-4o'
-      version: '2024-05-13'
+      version: '2024-11-20'
     }
     versionUpgradeOption: 'OnceCurrentVersionExpired'
     currentCapacity: 450
@@ -474,6 +474,12 @@ resource apiGatewayContainerApp 'Microsoft.App/containerapps@2024-02-02-preview'
             cpu: json('0.5')
             memory: '1Gi'
           }
+          env: [
+            {
+              name: 'CORS_ALLOWED_ORIGINS'
+              value: 'https://${aiShopUiContainerAppName}.${containerAppsEnvironment.properties.defaultDomain},http://localhost:3000'
+            }
+          ]
           probes: []
         }
       ]

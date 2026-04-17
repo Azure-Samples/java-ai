@@ -16,16 +16,17 @@ To run the AI Image Processing Service locally, you need first to build the comm
 
 1. [Build the common module](../java-ai-common/common/README.md)
 2. Ensure that the Eurka Server is running. If not, [start the Eureka Server](../eureka-server/README.md)
-3. Set the following environment variable. You will get the Azure OpenAI Endpoint in the Azure AI Foundry Portal https://ai.azure.com:
+3. Set the following environment variables. You will get the values in the Azure AI Foundry Portal https://ai.azure.com:
 
     ```bash
     export AZURE_OPENAI_ENDPOINT=<your-azure-openai-endpoint>
+    export AZURE_OPENAI_API_KEY=<your-azure-openai-api-key>
     ```
 
-4. Start the AI Image Processing Service in folder `src/ai-image-processing-service/`
+4. Start the AI Image Processing Service in folder `src/ai-image-processing-service/` using the `local` profile. The `local` profile disables Azure credential auto-configuration (DefaultAzureCredential) so the API key is used instead:
 
     ```bash
-    ./mvnw spring-boot:run
+    ./mvnw spring-boot:run -Dspring-boot.run.profiles=local -DskipTests
     ```
 
 ## Build the image and push it to Azure Container Registry
