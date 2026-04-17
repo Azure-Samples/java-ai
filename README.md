@@ -132,6 +132,43 @@ To run the AI Shop locally, you need first to build the common module and then s
 6. [Start the API Gateway](src/api-gateway/README.md)
 7. [Start the AI Shop UI](src/ai-shop-ui/README.md)
 
+### Quick Start - Run all services locally
+
+Set the required environment variables:
+
+```bash
+export AZURE_OPENAI_ENDPOINT=<your-azure-openai-endpoint>
+export AZURE_OPENAI_API_KEY=<your-azure-openai-api-key>
+export AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o
+```
+
+Then start all services in order:
+
+```bash
+# 1. Build Common module
+cd src/java-ai-common/common && ./mvnw clean install -DskipTests
+
+# 2. Start Eureka Server
+cd ../../eureka-server && ./mvnw spring-boot:run -DskipTests &
+
+# 3. Start Blob Storage Service (local profile uses file system)
+cd ../blob-storage-service && ./mvnw spring-boot:run -Dspring-boot.run.profiles=local -DskipTests &
+
+# 4. Start AI Image Processing Service (local profile uses API key)
+cd ../ai-image-processing-service && ./mvnw spring-boot:run -Dspring-boot.run.profiles=local -DskipTests &
+
+# 5. Start Item Category Service (local profile uses API key)
+cd ../item-category-service && ./mvnw spring-boot:run -Dspring-boot.run.profiles=local -DskipTests &
+
+# 6. Start API Gateway
+cd ../api-gateway && ./mvnw spring-boot:run -DskipTests &
+
+# 7. Start React UI
+cd ../ai-shop-ui && npm install && npm start
+```
+
+The application will be available at http://localhost:3000.
+
 ## Deploy to Azure
 
 The following resources will be created as represented in the diagram below:
